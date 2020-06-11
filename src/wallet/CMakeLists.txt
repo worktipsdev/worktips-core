@@ -51,6 +51,7 @@ target_link_libraries(wallet
     Boost::thread
   PRIVATE
     OpenSSL::SSL
+    OpenSSL::Crypto
     extra)
 
 worktips_add_executable(wallet_rpc_server "worktips-wallet-rpc"

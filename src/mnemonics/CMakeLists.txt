@@ -33,6 +33,7 @@ add_library(mnemonics
 
 target_link_libraries(mnemonics
   PRIVATE
+    cncrypto
     epee
     easylogging
     extra)
