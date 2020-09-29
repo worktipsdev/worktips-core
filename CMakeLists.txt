@@ -787,7 +787,7 @@ if(STATIC)
 endif()
 set(Boost_USE_MULTITHREADED TRUE) # Needed for macOS, at least, and won't hurt elsewhere
 
-if(BUILD_STATIC_DEPS)
+if(TRUE OR BUILD_STATIC_DEPS) # Bypass this for xenial, where we build static boost
   # StaticBuild.cmake sets Boost targets up for us
 elseif (WIN32)
   find_package(Boost 1.58 QUIET REQUIRED COMPONENTS system filesystem thread date_time serialization program_options locale)
