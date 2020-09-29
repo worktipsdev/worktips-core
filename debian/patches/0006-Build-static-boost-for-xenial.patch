@@ -1,0 +1,194 @@
+From: Jason Rhinelander <jason@imaginary.ca>
+Date: Tue, 29 Sep 2020 16:47:08 -0300
+Subject: Build static boost for xenial
+
+---
+ CMakeLists.txt          |   2 +
+ cmake/StaticBoost.cmake | 165 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 167 insertions(+)
+ create mode 100644 cmake/StaticBoost.cmake
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0a46d4b..23af714 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -348,6 +348,8 @@ endif()
+ option(BUILD_STATIC_DEPS "Download, build and statically link against core dependencies" OFF)
+ if(BUILD_STATIC_DEPS)
+   include(StaticBuild)
++else()
++  include(StaticBoost)
+ endif()
+ 
+ if(MSVC OR MINGW OR BUILD_STATIC_DEPS)
+diff --git a/cmake/StaticBoost.cmake b/cmake/StaticBoost.cmake
+new file mode 100644
+index 0000000..21407a3
+--- /dev/null
++++ b/cmake/StaticBoost.cmake
+@@ -0,0 +1,165 @@
++# cmake bits to build a static boost (extracted from StaticBuild.cmake), because I tried but failed
++# to backport boost to xenial.
++
++set(LOCAL_MIRROR "" CACHE STRING "local mirror path/URL for lib downloads")
++
++set(BOOST_VERSION 1.74.0 CACHE STRING "boost version")
++set(BOOST_MIRROR ${LOCAL_MIRROR} https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source
++    CACHE STRING "boost download mirror(s)")
++string(REPLACE "." "_" BOOST_VERSION_ ${BOOST_VERSION})
++set(BOOST_SOURCE boost_${BOOST_VERSION_}.tar.bz2)
++set(BOOST_HASH SHA256=83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1
++    CACHE STRING "boost source hash")
++
++include(ExternalProject)
++
++set(DEPS_DESTDIR ${CMAKE_BINARY_DIR}/static-deps)
++set(DEPS_SOURCEDIR ${CMAKE_BINARY_DIR}/static-deps-sources)
++
++include_directories(BEFORE SYSTEM ${DEPS_DESTDIR}/include)
++
++file(MAKE_DIRECTORY ${DEPS_DESTDIR}/include)
++
++set(deps_cc "${CMAKE_C_COMPILER}")
++set(deps_cxx "${CMAKE_CXX_COMPILER}")
++if(CMAKE_C_COMPILER_LAUNCHER)
++  set(deps_cc "${CMAKE_C_COMPILER_LAUNCHER} ${deps_cc}")
++endif()
++if(CMAKE_CXX_COMPILER_LAUNCHER)
++  set(deps_cxx "${CMAKE_CXX_COMPILER_LAUNCHER} ${deps_cxx}")
++endif()
++
++function(expand_urls output source_file)
++  set(expanded)
++  foreach(mirror ${ARGN})
++    list(APPEND expanded "${mirror}/${source_file}")
++  endforeach()
++  set(${output} "${expanded}" PARENT_SCOPE)
++endfunction()
++
++function(add_static_target target ext_target libname)
++  add_library(${target} STATIC IMPORTED GLOBAL)
++  add_dependencies(${target} ${ext_target})
++  set_target_properties(${target} PROPERTIES
++    IMPORTED_LOCATION ${DEPS_DESTDIR}/lib/${libname}
++  )
++endfunction()
++
++
++
++if(USE_LTO)
++  set(flto "-flto")
++else()
++  set(flto "")
++endif()
++
++# Builds a target; takes the target name (e.g. "readline") and builds it in an external project with
++# target name suffixed with `_external`.  Its upper-case value is used to get the download details
++# (from the variables set above).  The following options are supported and passed through to
++# ExternalProject_Add if specified.  If omitted, these defaults are used:
++set(build_def_DEPENDS "")
++set(build_def_PATCH_COMMAND "")
++set(build_def_CONFIGURE_COMMAND ./configure ${cross_host} --disable-shared --prefix=${DEPS_DESTDIR} --with-pic
++    "CC=${deps_cc}" "CXX=${deps_cxx}" "CFLAGS=-O2 ${flto}" "CXXFLAGS=-O2 ${flto}" ${cross_rc})
++set(build_def_BUILD_COMMAND make)
++set(build_def_INSTALL_COMMAND make install)
++set(build_def_BUILD_BYPRODUCTS ${DEPS_DESTDIR}/lib/lib___TARGET___.a ${DEPS_DESTDIR}/include/___TARGET___.h)
++
++function(build_external target)
++  set(options DEPENDS PATCH_COMMAND CONFIGURE_COMMAND BUILD_COMMAND INSTALL_COMMAND BUILD_BYPRODUCTS)
++  cmake_parse_arguments(PARSE_ARGV 1 arg "" "" "${options}")
++  foreach(o ${options})
++    if(NOT DEFINED arg_${o})
++      set(arg_${o} ${build_def_${o}})
++    endif()
++  endforeach()
++  string(REPLACE ___TARGET___ ${target} arg_BUILD_BYPRODUCTS "${arg_BUILD_BYPRODUCTS}")
++
++  string(TOUPPER "${target}" prefix)
++  expand_urls(urls ${${prefix}_SOURCE} ${${prefix}_MIRROR})
++  ExternalProject_Add("${target}_external"
++    DEPENDS ${arg_DEPENDS}
++    BUILD_IN_SOURCE ON
++    PREFIX ${DEPS_SOURCEDIR}
++    URL ${urls}
++    URL_HASH ${${prefix}_HASH}
++    DOWNLOAD_NO_PROGRESS ON
++    PATCH_COMMAND ${arg_PATCH_COMMAND}
++    CONFIGURE_COMMAND ${arg_CONFIGURE_COMMAND}
++    BUILD_COMMAND ${arg_BUILD_COMMAND}
++    INSTALL_COMMAND ${arg_INSTALL_COMMAND}
++    BUILD_BYPRODUCTS ${arg_BUILD_BYPRODUCTS}
++  )
++endfunction()
++
++
++
++set(boost_threadapi "pthread")
++set(boost_bootstrap_cxx "CXX=${deps_cxx}")
++set(boost_toolset "")
++set(boost_extra "")
++if(USE_LTO)
++  list(APPEND boost_extra "lto=on")
++endif()
++if(CMAKE_CROSSCOMPILING)
++  set(boost_bootstrap_cxx "") # need to use our native compiler to bootstrap
++  if(ARCH_TRIPLET MATCHES mingw)
++    set(boost_threadapi win32)
++    list(APPEND boost_extra "target-os=windows")
++    if(ARCH_TRIPLET MATCHES x86_64)
++      list(APPEND boost_extra "address-model=64")
++    else()
++      list(APPEND boost_extra "address-model=32")
++    endif()
++  endif()
++endif()
++if(CMAKE_CXX_COMPILER_ID STREQUAL GNU)
++  set(boost_toolset gcc)
++elseif(CMAKE_CXX_COMPILER_ID MATCHES "^(Apple)?Clang$")
++  set(boost_toolset clang)
++else()
++  message(FATAL_ERROR "don't know how to build boost with ${CMAKE_CXX_COMPILER_ID}")
++endif()
++file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/user-config.bjam "using ${boost_toolset} : : ${deps_cxx} ;")
++
++set(boost_patch_commands "")
++if(APPLE AND BOOST_VERSION VERSION_LESS 1.74.0)
++  set(boost_patch_commands PATCH_COMMAND patch -p1 -d tools/build -i ${PROJECT_SOURCE_DIR}/utils/build_scripts/boostorg-build-pr560-macos-build-fix.patch)
++endif()
++
++build_external(boost
++  #  PATCH_COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/user-config.bjam tools/build/src/user-config.jam
++  ${boost_patch_commands}
++  CONFIGURE_COMMAND
++    ${CMAKE_COMMAND} -E env ${boost_bootstrap_cxx}
++    ./bootstrap.sh --without-icu --prefix=${DEPS_DESTDIR} --with-toolset=${boost_toolset}
++      --with-libraries=filesystem,program_options,system,thread,date_time,serialization,locale,atomic
++  BUILD_COMMAND true
++  INSTALL_COMMAND
++    ./b2 -d0 variant=release link=static runtime-link=static optimization=speed ${boost_extra}
++      threading=multi threadapi=${boost_threadapi} cxxflags=-fPIC cxxstd=14 visibility=global
++      --disable-icu --user-config=${CMAKE_CURRENT_BINARY_DIR}/user-config.bjam
++      install
++  BUILD_BYPRODUCTS
++    ${DEPS_DESTDIR}/lib/libboost_atomic.a
++    ${DEPS_DESTDIR}/lib/libboost_date_time.a
++    ${DEPS_DESTDIR}/lib/libboost_filesystem.a
++    ${DEPS_DESTDIR}/lib/libboost_locale.a
++    ${DEPS_DESTDIR}/lib/libboost_program_options.a
++    ${DEPS_DESTDIR}/lib/libboost_serialization.a
++    ${DEPS_DESTDIR}/lib/libboost_system.a
++    ${DEPS_DESTDIR}/lib/libboost_thread.a
++    ${DEPS_DESTDIR}/include/boost/version.hpp
++)
++add_library(boost_core INTERFACE)
++add_dependencies(boost_core INTERFACE boost_external)
++target_include_directories(boost_core SYSTEM INTERFACE ${DEPS_DESTDIR}/include)
++add_library(Boost::boost ALIAS boost_core)
++foreach(boostlib atomic date_time filesystem locale program_options serialization system thread)
++  add_static_target(Boost::${boostlib} boost_external libboost_${boostlib}.a)
++  target_link_libraries(Boost::${boostlib} INTERFACE boost_core)
++endforeach()
++target_link_libraries(Boost::locale INTERFACE Boost::thread)
++set(Boost_FOUND ON)
++set(Boost_VERSION ${BOOST_VERSION})
++
