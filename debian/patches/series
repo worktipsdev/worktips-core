@@ -5,3 +5,4 @@
 0007-dumb-ARM_ID-ARCH-logic-workaround.patch
 0007-Enable-aes-under-clang.patch
 0007-Build-static-boost-cmake-for-xenial.patch
+0008-Link-boost-libs-as-PUBLIC.patch

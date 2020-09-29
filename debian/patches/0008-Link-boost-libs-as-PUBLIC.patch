@@ -1,0 +1,265 @@
+From: Jason Rhinelander <jason@imaginary.ca>
+Date: Tue, 29 Sep 2020 20:04:34 -0300
+Subject: Link boost libs as PUBLIC
+
+PRIVATE is a problem when we are making .so's because we end up with
+symbol conflicts.
+---
+ src/blockchain_db/CMakeLists.txt    | 5 +++--
+ src/checkpoints/CMakeLists.txt      | 7 ++++---
+ src/cryptonote_basic/CMakeLists.txt | 8 ++++----
+ src/cryptonote_core/CMakeLists.txt  | 2 +-
+ src/daemon/CMakeLists.txt           | 7 ++++---
+ src/debug_utilities/CMakeLists.txt  | 3 ++-
+ src/gen_multisig/CMakeLists.txt     | 5 +++--
+ src/p2p/CMakeLists.txt              | 6 +++---
+ src/rpc/CMakeLists.txt              | 7 ++++---
+ src/serialization/CMakeLists.txt    | 3 ++-
+ src/simplewallet/CMakeLists.txt     | 7 ++++---
+ src/wallet/CMakeLists.txt           | 3 ++-
+ 12 files changed, 36 insertions(+), 27 deletions(-)
+
+diff --git a/src/blockchain_db/CMakeLists.txt b/src/blockchain_db/CMakeLists.txt
+index bfd12b3..7ce8450 100644
+--- a/src/blockchain_db/CMakeLists.txt
++++ b/src/blockchain_db/CMakeLists.txt
+@@ -33,12 +33,13 @@ add_library(blockchain_db
+   )
+ 
+ target_link_libraries(blockchain_db
++  PUBLIC
++    Boost::filesystem
++    Boost::thread
+   PRIVATE
+     common
+     ringct
+     lmdb
+-    Boost::filesystem
+-    Boost::thread
+     extra)
+ 
+ target_compile_definitions(blockchain_db PRIVATE
+diff --git a/src/checkpoints/CMakeLists.txt b/src/checkpoints/CMakeLists.txt
+index cc8503c..706c542 100644
+--- a/src/checkpoints/CMakeLists.txt
++++ b/src/checkpoints/CMakeLists.txt
+@@ -32,11 +32,12 @@ add_library(checkpoints
+   )
+ 
+ target_link_libraries(checkpoints
+-  PRIVATE
+-    common
+-    cryptonote_basic
++  PUBLIC
+     Boost::date_time
+     Boost::program_options
+     Boost::serialization
+     Boost::filesystem
++  PRIVATE
++    common
++    cryptonote_basic
+     extra)
+diff --git a/src/cryptonote_basic/CMakeLists.txt b/src/cryptonote_basic/CMakeLists.txt
+index 88868a4..b685a8c 100644
+--- a/src/cryptonote_basic/CMakeLists.txt
++++ b/src/cryptonote_basic/CMakeLists.txt
+@@ -36,11 +36,11 @@ add_library(cryptonote_basic
+   miner.cpp)
+ 
+ target_link_libraries(cryptonote_basic
+-  PRIVATE
+-    common
+-    device
++  PUBLIC
+     Boost::date_time
+     Boost::program_options
+-    Boost::serialization
+     Boost::filesystem
++  PRIVATE
++    common
++    device
+     extra)
+diff --git a/src/cryptonote_core/CMakeLists.txt b/src/cryptonote_core/CMakeLists.txt
+index d97184e..fe46813 100644
+--- a/src/cryptonote_core/CMakeLists.txt
++++ b/src/cryptonote_core/CMakeLists.txt
+@@ -52,8 +52,8 @@ target_link_libraries(cryptonote_core
+     device
+     checkpoints
+     sqlite3
+-  PRIVATE
+     Boost::program_options
++  PRIVATE
+     systemd
+     extra)
+ 
+diff --git a/src/daemon/CMakeLists.txt b/src/daemon/CMakeLists.txt
+index 78a7347..e5cf25c 100644
+--- a/src/daemon/CMakeLists.txt
++++ b/src/daemon/CMakeLists.txt
+@@ -35,6 +35,10 @@ loki_add_executable(daemon "lokid"
+   rpc_command_executor.cpp
+   )
+ target_link_libraries(daemon
++  PUBLIC
++    Boost::filesystem
++    Boost::program_options
++    Boost::system
+   PRIVATE
+     rpc
+     rpc_http_client
+@@ -46,8 +50,5 @@ target_link_libraries(daemon
+     serialization
+     daemon_rpc_server
+     version
+-    Boost::filesystem
+-    Boost::program_options
+-    Boost::system
+     systemd
+     extra)
+diff --git a/src/debug_utilities/CMakeLists.txt b/src/debug_utilities/CMakeLists.txt
+index d9f8c03..1583535 100644
+--- a/src/debug_utilities/CMakeLists.txt
++++ b/src/debug_utilities/CMakeLists.txt
+@@ -32,8 +32,9 @@ loki_add_executable(cn_deserialize "loki-utils-deserialize"
+   )
+ 
+ target_link_libraries(cn_deserialize
+-  PRIVATE
++  PUBLIC
+     Boost::program_options
++  PRIVATE
+     p2p
+     extra)
+ 
+diff --git a/src/gen_multisig/CMakeLists.txt b/src/gen_multisig/CMakeLists.txt
+index df97c88..d30c651 100644
+--- a/src/gen_multisig/CMakeLists.txt
++++ b/src/gen_multisig/CMakeLists.txt
+@@ -32,12 +32,13 @@ loki_add_executable(gen_multisig "loki-gen-trusted-multisig"
+   )
+ 
+ target_link_libraries(gen_multisig
++  PUBLIC
++    Boost::program_options
++    Boost::filesystem
+   PRIVATE
+     wallet
+     rpc_commands
+     cryptonote_core
+     epee
+-    Boost::program_options
+-    Boost::filesystem
+     version
+     extra)
+diff --git a/src/p2p/CMakeLists.txt b/src/p2p/CMakeLists.txt
+index e3922c1..426d922 100644
+--- a/src/p2p/CMakeLists.txt
++++ b/src/p2p/CMakeLists.txt
+@@ -36,11 +36,11 @@ add_library(p2p
+ target_link_libraries(p2p
+   PUBLIC
+     cryptonote_core
++    Boost::program_options
++    Boost::filesystem
++    Boost::serialization
+   PRIVATE
+     version
+     net
+     miniupnpc
+-    Boost::program_options
+-    Boost::filesystem
+-    Boost::serialization
+     extra)
+diff --git a/src/rpc/CMakeLists.txt b/src/rpc/CMakeLists.txt
+index 3e17fa6..3822355 100644
+--- a/src/rpc/CMakeLists.txt
++++ b/src/rpc/CMakeLists.txt
+@@ -78,10 +78,10 @@ target_link_libraries(rpc
+     rpc_server_base
+     net
+     version
+-  PRIVATE
+-    cryptonote_protocol
+     Boost::thread
+     Boost::program_options
++  PRIVATE
++    cryptonote_protocol
+     OpenSSL::SSL
+     extra)
+ 
+@@ -94,12 +94,13 @@ target_link_libraries(daemon_messages
+     extra)
+ 
+ target_link_libraries(daemon_rpc_server
++  PUBLIC
++    Boost::thread
+   PRIVATE
+     rpc_server_base
+     rpc
+     daemon_messages
+     serialization
+-    Boost::thread
+     extra)
+ 
+ target_link_libraries(rpc_http_client
+diff --git a/src/serialization/CMakeLists.txt b/src/serialization/CMakeLists.txt
+index 33cd242..da5e3d1 100644
+--- a/src/serialization/CMakeLists.txt
++++ b/src/serialization/CMakeLists.txt
+@@ -31,10 +31,11 @@ add_library(serialization
+   json_object.cpp
+   )
+ target_link_libraries(serialization
++  PUBLIC
++    Boost::thread
+   PRIVATE
+     cryptonote_core
+     cryptonote_protocol
+-    Boost::thread
+     version
+     extra)
+ 
+diff --git a/src/simplewallet/CMakeLists.txt b/src/simplewallet/CMakeLists.txt
+index 6d6848c..aa3484b 100644
+--- a/src/simplewallet/CMakeLists.txt
++++ b/src/simplewallet/CMakeLists.txt
+@@ -31,16 +31,17 @@ loki_add_executable(simplewallet "loki-wallet-cli"
+   simplewallet.cpp
+   )
+ target_link_libraries(simplewallet
++  PUBLIC
++    Boost::program_options
++    Boost::filesystem
++    Boost::thread
+   PRIVATE
+     wallet
+     daemonizer
+     rpc_commands
+     cryptonote_core
+     mnemonics
+-    Boost::program_options
+-    Boost::filesystem
+     icu
+-    Boost::thread
+     extra)
+ 
+ if (WIN32)
+diff --git a/src/wallet/CMakeLists.txt b/src/wallet/CMakeLists.txt
+index 97e1b05..48d7feb 100644
+--- a/src/wallet/CMakeLists.txt
++++ b/src/wallet/CMakeLists.txt
+@@ -62,11 +62,12 @@ loki_add_executable(wallet_rpc_server "loki-wallet-rpc"
+   )
+ 
+ target_link_libraries(wallet_rpc_server
++  PUBLIC
++    Boost::program_options
+   PRIVATE
+     rpc_server_base
+     wallet
+     daemonizer
+-    Boost::program_options
+     extra)
+ 
+ 

@@ -4,9 +4,9 @@ Subject: Build static boost+cmake for xenial
 
 ---
  CMakeLists.txt           |   2 +
- cmake/StaticXenial.cmake | 197 +++++++++++++++++++++++++++++++++++++++++++++++
+ cmake/StaticXenial.cmake | 196 +++++++++++++++++++++++++++++++++++++++++++++++
  external/CMakeLists.txt  |   2 +-
- 3 files changed, 200 insertions(+), 1 deletion(-)
+ 3 files changed, 199 insertions(+), 1 deletion(-)
  create mode 100644 cmake/StaticXenial.cmake
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
@@ -24,7 +24,7 @@ index be70fd6..594711e 100644
  if(MSVC OR MINGW OR BUILD_STATIC_DEPS)
 diff --git a/cmake/StaticXenial.cmake b/cmake/StaticXenial.cmake
 new file mode 100644
-index 0000000..ccaeca9
+index 0000000..bb21a51
 --- /dev/null
 +++ b/cmake/StaticXenial.cmake
 @@ -0,0 +1,196 @@
