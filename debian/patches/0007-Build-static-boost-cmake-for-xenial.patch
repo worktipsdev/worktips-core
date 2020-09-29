@@ -27,7 +27,7 @@ new file mode 100644
 index 0000000..ccaeca9
 --- /dev/null
 +++ b/cmake/StaticXenial.cmake
-@@ -0,0 +1,197 @@
+@@ -0,0 +1,196 @@
 +# cmake bits to build a static boost (extracted from StaticBuild.cmake), because I tried but failed
 +# to backport boost to xenial.
 +
@@ -221,7 +221,6 @@ index 0000000..ccaeca9
 +    ${DEPS_DESTDIR}/include/curl/curl.h
 +)
 +add_static_target(CURL::libcurl curl_external libcurl.a)
-+set(libcurl_link_libs zlib)
 +set_target_properties(CURL::libcurl PROPERTIES
 +  INTERFACE_LINK_LIBRARIES "${libcurl_link_libs}"
 +  INTERFACE_COMPILE_DEFINITIONS "CURL_STATICLIB")
