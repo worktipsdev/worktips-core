@@ -5,6 +5,7 @@ Subject: Link boost libs as PUBLIC
 PRIVATE is a problem when we are making .so's because we end up with
 symbol conflicts.
 ---
+ contrib/epee/src/CMakeLists.txt     | 2 +-
  src/blockchain_db/CMakeLists.txt    | 5 +++--
  src/checkpoints/CMakeLists.txt      | 7 ++++---
  src/cryptonote_basic/CMakeLists.txt | 8 ++++----
@@ -17,8 +18,23 @@ symbol conflicts.
  src/serialization/CMakeLists.txt    | 3 ++-
  src/simplewallet/CMakeLists.txt     | 7 ++++---
  src/wallet/CMakeLists.txt           | 3 ++-
- 12 files changed, 36 insertions(+), 27 deletions(-)
+ 13 files changed, 37 insertions(+), 28 deletions(-)
 
+diff --git a/contrib/epee/src/CMakeLists.txt b/contrib/epee/src/CMakeLists.txt
+index 00e4da7..adc42d7 100644
+--- a/contrib/epee/src/CMakeLists.txt
++++ b/contrib/epee/src/CMakeLists.txt
+@@ -64,9 +64,9 @@ endif()
+ target_link_libraries(epee
+   PUBLIC
+     easylogging
+-  PRIVATE
+     Boost::filesystem
+     Boost::thread
++  PRIVATE
+     extra)
+ 
+ target_include_directories(epee PUBLIC ../include)
 diff --git a/src/blockchain_db/CMakeLists.txt b/src/blockchain_db/CMakeLists.txt
 index bfd12b3..7ce8450 100644
 --- a/src/blockchain_db/CMakeLists.txt

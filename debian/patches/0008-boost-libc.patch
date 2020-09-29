@@ -1,0 +1,21 @@
+From: Jason Rhinelander <jason@imaginary.ca>
+Date: Tue, 29 Sep 2020 20:20:29 -0300
+Subject: boost libc++
+
+---
+ cmake/StaticXenial.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/StaticXenial.cmake b/cmake/StaticXenial.cmake
+index bb21a51..98245dd 100644
+--- a/cmake/StaticXenial.cmake
++++ b/cmake/StaticXenial.cmake
+@@ -129,7 +129,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "^(Apple)?Clang$")
+ else()
+   message(FATAL_ERROR "don't know how to build boost with ${CMAKE_CXX_COMPILER_ID}")
+ endif()
+-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/user-config.bjam "using ${boost_toolset} : : ${deps_cxx} : <ranlib>llvm-ranlib-8 <archiver>llvm-ar-8 ;")
++file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/user-config.bjam "using ${boost_toolset} : : ${deps_cxx} : <cxxflags>-stdlib=libc++ <ranlib>llvm-ranlib-8 <archiver>llvm-ar-8 ;")
+ 
+ set(boost_patch_commands "")
+ if(APPLE AND BOOST_VERSION VERSION_LESS 1.74.0)
