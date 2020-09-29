@@ -1,15 +1,16 @@
 From: Jason Rhinelander <jason@imaginary.ca>
 Date: Tue, 29 Sep 2020 16:47:08 -0300
-Subject: Build static boost for xenial
+Subject: Build static boost+cmake for xenial
 
 ---
- CMakeLists.txt          |   2 +
- cmake/StaticBoost.cmake | 165 ++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 167 insertions(+)
- create mode 100644 cmake/StaticBoost.cmake
+ CMakeLists.txt           |   2 +
+ cmake/StaticXenial.cmake | 197 +++++++++++++++++++++++++++++++++++++++++++++++
+ external/CMakeLists.txt  |   2 +-
+ 3 files changed, 200 insertions(+), 1 deletion(-)
+ create mode 100644 cmake/StaticXenial.cmake
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index be70fd6..5b0d727 100644
+index be70fd6..594711e 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
 @@ -348,6 +348,8 @@ endif()
@@ -17,16 +18,16 @@ index be70fd6..5b0d727 100644
  if(BUILD_STATIC_DEPS)
    include(StaticBuild)
 +else()
-+  include(StaticBoost)
++  include(StaticXenial)
  endif()
  
  if(MSVC OR MINGW OR BUILD_STATIC_DEPS)
-diff --git a/cmake/StaticBoost.cmake b/cmake/StaticBoost.cmake
+diff --git a/cmake/StaticXenial.cmake b/cmake/StaticXenial.cmake
 new file mode 100644
-index 0000000..21407a3
+index 0000000..ccaeca9
 --- /dev/null
-+++ b/cmake/StaticBoost.cmake
-@@ -0,0 +1,165 @@
++++ b/cmake/StaticXenial.cmake
+@@ -0,0 +1,197 @@
 +# cmake bits to build a static boost (extracted from StaticBuild.cmake), because I tried but failed
 +# to backport boost to xenial.
 +
@@ -39,6 +40,15 @@ index 0000000..21407a3
 +set(BOOST_SOURCE boost_${BOOST_VERSION_}.tar.bz2)
 +set(BOOST_HASH SHA256=83bfc1507731a0906e387fc28b7ef5417d591429e51e788417fe9ff025e116b1
 +    CACHE STRING "boost source hash")
++
++set(CURL_VERSION 7.72.0 CACHE STRING "curl version")
++set(CURL_MIRROR ${LOCAL_MIRROR} https://curl.haxx.se/download https://curl.askapache.com
++  CACHE STRING "curl mirror(s)")
++set(CURL_SOURCE curl-${CURL_VERSION}.tar.xz)
++set(CURL_HASH SHA256=0ded0808c4d85f2ee0db86980ae610cc9d165e9ca9da466196cc73c346513713
++  CACHE STRING "curl source hash")
++
++
 +
 +include(ExternalProject)
 +
@@ -149,7 +159,7 @@ index 0000000..21407a3
 +else()
 +  message(FATAL_ERROR "don't know how to build boost with ${CMAKE_CXX_COMPILER_ID}")
 +endif()
-+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/user-config.bjam "using ${boost_toolset} : : ${deps_cxx} ;")
++file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/user-config.bjam "using ${boost_toolset} : : ${deps_cxx} : <ranlib>llvm-ranlib-8 <archiver>llvm-ar-8 ;")
 +
 +set(boost_patch_commands "")
 +if(APPLE AND BOOST_VERSION VERSION_LESS 1.74.0)
@@ -192,3 +202,39 @@ index 0000000..21407a3
 +set(Boost_FOUND ON)
 +set(Boost_VERSION ${BOOST_VERSION})
 +
++
++
++build_external(curl
++  CONFIGURE_COMMAND ./configure ${cross_host} ${cross_rc} --prefix=${DEPS_DESTDIR} --disable-shared
++  --enable-static --disable-ares --disable-ftp --disable-ldap --disable-laps --disable-rtsp
++  --disable-dict --disable-telnet --disable-tftp --disable-pop3 --disable-imap --disable-smb
++  --disable-smtp --disable-gopher --disable-manual --disable-libcurl-option --enable-http
++  --enable-ipv6 --disable-threaded-resolver --disable-pthreads --disable-verbose --disable-sspi
++  --enable-crypto-auth --disable-ntlm-wb --disable-tls-srp --disable-unix-sockets --disable-cookies
++  --enable-http-auth --enable-doh --disable-mime --enable-dateparse --disable-netrc --without-libidn2
++  --disable-progress-meter --without-brotli
++  --without-libmetalink --without-librtmp --disable-versioned-symbols --enable-hidden-symbols
++  --without-zsh-functions-dir --without-fish-functions-dir
++  "CC=${deps_cc}" "CFLAGS=-O2 ${flto}" LIBS=-pthread AR=llvm-ar-8 RANLIB=llvm-ranlib-8
++  BUILD_BYPRODUCTS
++    ${DEPS_DESTDIR}/lib/libcurl.a
++    ${DEPS_DESTDIR}/include/curl/curl.h
++)
++add_static_target(CURL::libcurl curl_external libcurl.a)
++set(libcurl_link_libs zlib)
++set_target_properties(CURL::libcurl PROPERTIES
++  INTERFACE_LINK_LIBRARIES "${libcurl_link_libs}"
++  INTERFACE_COMPILE_DEFINITIONS "CURL_STATICLIB")
+diff --git a/external/CMakeLists.txt b/external/CMakeLists.txt
+index 4f1abc8..2272f10 100644
+--- a/external/CMakeLists.txt
++++ b/external/CMakeLists.txt
+@@ -136,7 +136,7 @@ target_compile_definitions(uWebSockets INTERFACE UWS_HTTPRESPONSE_NO_WRITEMARK U
+ # cpr configuration.  Ideally we'd just do this via add_subdirectory, but cpr's cmake requires
+ # 3.15+, and we target lower than that (and this is fairly simple to build).
+ 
+-if(NOT BUILD_STATIC_DEPS)
++if(FALSE AND NOT BUILD_STATIC_DEPS)
+   find_package(CURL REQUIRED COMPONENTS HTTP HTTPS SSL)
+ 
+   # CURL::libcurl wasn't added to FindCURL until cmake 3.12, so add it if necessary
