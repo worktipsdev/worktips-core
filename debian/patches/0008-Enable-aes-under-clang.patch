@@ -1,0 +1,21 @@
+From: Jason Rhinelander <jason@imaginary.ca>
+Date: Tue, 29 Sep 2020 18:14:30 -0300
+Subject: Enable aes under clang
+
+---
+ src/crypto/CMakeLists.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/crypto/CMakeLists.txt b/src/crypto/CMakeLists.txt
+index ca46408..099f849 100644
+--- a/src/crypto/CMakeLists.txt
++++ b/src/crypto/CMakeLists.txt
+@@ -63,6 +63,8 @@ target_link_libraries(cncrypto
+   PRIVATE
+     extra)
+ 
++set_source_files_properties(cn_heavy_hash_hard_intel.cpp PROPERTIES COMPILE_FLAGS -maes)
++
+ # Because of the way Qt works on android with JNI, the code does not live in the main android thread
+ # So this code runs with a 1 MB default stack size. 
+ # This will force the use of the heap for the allocation of the scratchpad
