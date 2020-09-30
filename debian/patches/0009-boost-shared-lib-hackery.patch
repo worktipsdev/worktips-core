@@ -1,0 +1,103 @@
+From: Jason Rhinelander <jason@imaginary.ca>
+Date: Tue, 29 Sep 2020 21:34:28 -0300
+Subject: boost shared lib hackery
+
+---
+ cmake/StaticXenial.cmake | 52 +++++++++++++++++++-----------------------------
+ 1 file changed, 20 insertions(+), 32 deletions(-)
+
+diff --git a/cmake/StaticXenial.cmake b/cmake/StaticXenial.cmake
+index 98245dd..154c7f7 100644
+--- a/cmake/StaticXenial.cmake
++++ b/cmake/StaticXenial.cmake
+@@ -54,6 +54,14 @@ function(add_static_target target ext_target libname)
+   )
+ endfunction()
+ 
++function(add_shared_target target ext_target libname)
++  add_library(${target} SHARED IMPORTED GLOBAL)
++  add_dependencies(${target} ${ext_target})
++  set_target_properties(${target} PROPERTIES
++    IMPORTED_LOCATION ${DEPS_DESTDIR}/lib/${libname}
++  )
++endfunction()
++
+ 
+ 
+ if(USE_LTO)
+@@ -110,18 +118,6 @@ set(boost_extra "")
+ if(USE_LTO)
+   list(APPEND boost_extra "lto=on")
+ endif()
+-if(CMAKE_CROSSCOMPILING)
+-  set(boost_bootstrap_cxx "") # need to use our native compiler to bootstrap
+-  if(ARCH_TRIPLET MATCHES mingw)
+-    set(boost_threadapi win32)
+-    list(APPEND boost_extra "target-os=windows")
+-    if(ARCH_TRIPLET MATCHES x86_64)
+-      list(APPEND boost_extra "address-model=64")
+-    else()
+-      list(APPEND boost_extra "address-model=32")
+-    endif()
+-  endif()
+-endif()
+ if(CMAKE_CXX_COMPILER_ID STREQUAL GNU)
+   set(boost_toolset gcc)
+ elseif(CMAKE_CXX_COMPILER_ID MATCHES "^(Apple)?Clang$")
+@@ -131,44 +127,36 @@ else()
+ endif()
+ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/user-config.bjam "using ${boost_toolset} : : ${deps_cxx} : <cxxflags>-stdlib=libc++ <ranlib>llvm-ranlib-8 <archiver>llvm-ar-8 ;")
+ 
+-set(boost_patch_commands "")
+-if(APPLE AND BOOST_VERSION VERSION_LESS 1.74.0)
+-  set(boost_patch_commands PATCH_COMMAND patch -p1 -d tools/build -i ${PROJECT_SOURCE_DIR}/utils/build_scripts/boostorg-build-pr560-macos-build-fix.patch)
+-endif()
+-
+ build_external(boost
+-  #  PATCH_COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_BINARY_DIR}/user-config.bjam tools/build/src/user-config.jam
+-  ${boost_patch_commands}
+   CONFIGURE_COMMAND
+     ${CMAKE_COMMAND} -E env ${boost_bootstrap_cxx}
+     ./bootstrap.sh --without-icu --prefix=${DEPS_DESTDIR} --with-toolset=${boost_toolset}
+-      --with-libraries=filesystem,program_options,system,thread,date_time,serialization,locale,atomic
++      --with-libraries=filesystem,program_options,system,thread,date_time,serialization,atomic
+   BUILD_COMMAND true
+   INSTALL_COMMAND
+-    ./b2 -d0 variant=release link=static runtime-link=static optimization=speed ${boost_extra}
++    ./b2 -d0 variant=release link=shared runtime-link=shared optimization=speed ${boost_extra}
+       threading=multi threadapi=${boost_threadapi} cxxflags=-fPIC cxxstd=14 visibility=global
+       --disable-icu --user-config=${CMAKE_CURRENT_BINARY_DIR}/user-config.bjam
+       install
+   BUILD_BYPRODUCTS
+-    ${DEPS_DESTDIR}/lib/libboost_atomic.a
+-    ${DEPS_DESTDIR}/lib/libboost_date_time.a
+-    ${DEPS_DESTDIR}/lib/libboost_filesystem.a
+-    ${DEPS_DESTDIR}/lib/libboost_locale.a
+-    ${DEPS_DESTDIR}/lib/libboost_program_options.a
+-    ${DEPS_DESTDIR}/lib/libboost_serialization.a
+-    ${DEPS_DESTDIR}/lib/libboost_system.a
+-    ${DEPS_DESTDIR}/lib/libboost_thread.a
++    ${DEPS_DESTDIR}/lib/libboost_atomic.so.${BOOST_VERSION}
++    ${DEPS_DESTDIR}/lib/libboost_chrono.so.${BOOST_VERSION}
++    ${DEPS_DESTDIR}/lib/libboost_date_time.so.${BOOST_VERSION}
++    ${DEPS_DESTDIR}/lib/libboost_filesystem.so.${BOOST_VERSION}
++    ${DEPS_DESTDIR}/lib/libboost_program_options.so.${BOOST_VERSION}
++    ${DEPS_DESTDIR}/lib/libboost_serialization.so.${BOOST_VERSION}
++    ${DEPS_DESTDIR}/lib/libboost_system.so.${BOOST_VERSION}
++    ${DEPS_DESTDIR}/lib/libboost_thread.so.${BOOST_VERSION}
+     ${DEPS_DESTDIR}/include/boost/version.hpp
+ )
+ add_library(boost_core INTERFACE)
+ add_dependencies(boost_core INTERFACE boost_external)
+ target_include_directories(boost_core SYSTEM INTERFACE ${DEPS_DESTDIR}/include)
+ add_library(Boost::boost ALIAS boost_core)
+-foreach(boostlib atomic date_time filesystem locale program_options serialization system thread)
+-  add_static_target(Boost::${boostlib} boost_external libboost_${boostlib}.a)
++foreach(boostlib atomic date_time filesystem program_options serialization system thread)
++  add_shared_target(Boost::${boostlib} boost_external libboost_${boostlib}.so.${BOOST_VERSION})
+   target_link_libraries(Boost::${boostlib} INTERFACE boost_core)
+ endforeach()
+-target_link_libraries(Boost::locale INTERFACE Boost::thread)
+ set(Boost_FOUND ON)
+ set(Boost_VERSION ${BOOST_VERSION})
+ 

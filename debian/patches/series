@@ -6,3 +6,4 @@
 0007-Enable-aes-under-clang.patch
 0007-Build-static-boost-cmake-for-xenial.patch
 0008-boost-libc.patch
+0009-boost-shared-lib-hackery.patch
