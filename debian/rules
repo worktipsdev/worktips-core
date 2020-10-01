@@ -29,15 +29,15 @@ override_dh_auto_configure:
 		-DCMAKE_AR=llvm-ar-8 -DCMAKE_RANLIB=llvm-ranlib-8 \
 		$(DEB_CMAKE_ARCH_OPTIONS) \
 		-DLOKI_INSTALL_LIBDIR_SUFFIX=/$(DEB_HOST_MULTIARCH)/loki-core -DLOKI_INSTALL_INCLUDEDIR_SUFFIX=/loki-core \
-		-DCMAKE_INSTALL_RPATH=/usr/lib/$(DEB_HOST_MULTIARCH)/loki-core \
+		-DCMAKE_INSTALL_RPATH=/usr/lib/$(DEB_HOST_MULTIARCH)/loki-core;/usr/lib/$(DEB_HOST_MULTIARCH)/loki-core/deps_$(DEB_VERSION_UPSTREAM) \
 		-DLOKI_VERSION_TAG=$(call dpkg_late_eval,LOKI_VERSION_TAG,echo '$(DEB_VERSION)' | sed -e 's/.*-//')
 
 override_dh_install:
-	cp obj-x86_64-linux-gnu/static-deps/lib/libboost_*.so.* debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/loki-core
+	cp obj-x86_64-linux-gnu/static-deps/lib/libboost_*.so.* debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/loki-core/deps_$(DEB_VERSION_UPSTREAM)
 	dh_install
 
 override_dh_shlibdeps:
-	dh_shlibdeps -l/usr/lib/$(DEB_HOST_MULTIARCH)/loki-core
+	dh_shlibdeps -l/usr/lib/$(DEB_HOST_MULTIARCH)/loki-core -l/usr/lib/$(DEB_HOST_MULTIARCH)/loki-core/deps_$(DEB_VERSION_UPSTREAM)
 
 override_dh_strip:
 	dh_strip --no-ddebs
