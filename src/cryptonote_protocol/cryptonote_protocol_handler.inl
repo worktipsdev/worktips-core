@@ -2,7 +2,7 @@
 /// @author rfree (current maintainer/user in monero.cc project - most of code is from CryptoNote)
 /// @brief This is the original cryptonote protocol network-events handler, modified by us
 
-// Copyright (c) 2018-2020, The Loki Project
+// Copyright (c) 2018-2020, The Worktips Project
 // Copyright (c) 2014-2019, The Monero Project
 //
 // All rights reserved.
@@ -53,8 +53,8 @@
 #include "common/lock.h"
 #include "common/util.h"
 
-#undef LOKI_DEFAULT_LOG_CATEGORY
-#define LOKI_DEFAULT_LOG_CATEGORY "net.cn"
+#undef WORKTIPS_DEFAULT_LOG_CATEGORY
+#define WORKTIPS_DEFAULT_LOG_CATEGORY "net.cn"
 
 #define MLOG_P2P_MESSAGE(x) MCINFO("net.p2p.msg", context << x)
 #define MLOGIF_P2P_MESSAGE(init, test, x) \
@@ -69,7 +69,7 @@
   } while(0)
 
 #define MLOG_PEER_STATE(x) \
-  MCINFO(LOKI_DEFAULT_LOG_CATEGORY, context << "[" << epee::string_tools::to_string_hex(context.m_pruning_seed) << "] state: " << x << " in state " << cryptonote::get_protocol_state_string(context.m_state))
+  MCINFO(WORKTIPS_DEFAULT_LOG_CATEGORY, context << "[" << epee::string_tools::to_string_hex(context.m_pruning_seed) << "] state: " << x << " in state " << cryptonote::get_protocol_state_string(context.m_state))
 
 namespace cryptonote
 {
@@ -1359,7 +1359,7 @@ namespace cryptonote
         m_core.pause_mine();
         m_add_timer.resume();
         bool starting = true;
-        LOKI_DEFER
+        WORKTIPS_DEFER
         {
           m_add_timer.pause();
           m_core.resume_mine();
@@ -1475,7 +1475,7 @@ namespace cryptonote
 
           {
             bool remove_spans = false;
-            LOKI_DEFER
+            WORKTIPS_DEFER
             {
               if (!m_core.cleanup_handle_incoming_blocks())
                 LOG_PRINT_CCONTEXT_L0("Failure in cleanup_handle_incoming_blocks");
@@ -2325,7 +2325,7 @@ skip:
         }
       }
       MGINFO_YELLOW("\n**********************************************************************\n"
-        << "You are now synchronized with the network. You may now start loki-wallet-cli.\n"
+        << "You are now synchronized with the network. You may now start worktips-wallet-cli.\n"
         << "\n"
         << "Use the \"help\" command to see the list of available commands.\n"
         << "**********************************************************************");
@@ -2687,7 +2687,7 @@ skip:
       MINFO("Target height decreasing from " << previous_target << " to " << target);
       m_core.set_target_blockchain_height(target);
       if (target == 0 && context.m_state > cryptonote_connection_context::state_before_handshake && !m_stopping)
-        MCWARNING("global", "lokid is now disconnected from the network");
+        MCWARNING("global", "worktipsd is now disconnected from the network");
     }
 
     m_block_queue.flush_spans(context.m_connection_id, false);

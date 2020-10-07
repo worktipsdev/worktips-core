@@ -154,7 +154,7 @@ namespace trezor {
         }
 
         // Scoped session closer
-        LOKI_DEFER {
+        WORKTIPS_DEFER {
           if (open_session){
             this->get_transport()->close();
           }

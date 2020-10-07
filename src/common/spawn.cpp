@@ -39,11 +39,11 @@
 #include "misc_log_ex.h"
 #include "util.h"
 #include "spawn.h"
-#include "loki.h"
+#include "worktips.h"
 #include "string_util.h"
 
-#undef LOKI_DEFAULT_LOG_CATEGORY
-#define LOKI_DEFAULT_LOG_CATEGORY "spawn"
+#undef WORKTIPS_DEFAULT_LOG_CATEGORY
+#define WORKTIPS_DEFAULT_LOG_CATEGORY "spawn"
 
 namespace tools
 {
@@ -84,7 +84,7 @@ int spawn(const char *filename, const std::vector<std::string>& args, bool wait)
     return -1;
   }
   
-  LOKI_DEFER {
+  WORKTIPS_DEFER {
     CloseHandle(pi.hThread);
     CloseHandle(pi.hProcess);
   };

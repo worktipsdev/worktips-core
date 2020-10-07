@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2020, The Loki Project
+// Copyright (c) 2018-2020, The Worktips Project
 // Copyright (c) 2014-2019, The Monero Project
 // 
 // All rights reserved.
@@ -31,7 +31,7 @@
 
 #include <memory>
 #include <stdexcept>
-#include <lokimq/lokimq.h>
+#include <worktipsmq/worktipsmq.h>
 #include <utility>
 
 #include "misc_log_ex.h"
@@ -64,8 +64,8 @@ extern "C" {
 
 using namespace std::literals;
 
-#undef LOKI_DEFAULT_LOG_CATEGORY
-#define LOKI_DEFAULT_LOG_CATEGORY "daemon"
+#undef WORKTIPS_DEFAULT_LOG_CATEGORY
+#define WORKTIPS_DEFAULT_LOG_CATEGORY "daemon"
 
 namespace daemonize {
 
@@ -207,7 +207,7 @@ bool daemon::run(bool interactive)
       stop();
   }};
 
-  LOKI_DEFER
+  WORKTIPS_DEFER
   {
     stop_sig = true;
     stop_thread.join();
@@ -217,7 +217,7 @@ bool daemon::run(bool interactive)
 
   try
   {
-    MGINFO_BLUE("Starting up lokid services...");
+    MGINFO_BLUE("Starting up worktipsd services...");
     cryptonote::GetCheckpointsCallback get_checkpoints;
 #if defined(PER_BLOCK_CHECKPOINT)
     get_checkpoints = blocks::GetCheckpointsData;
@@ -226,9 +226,9 @@ bool daemon::run(bool interactive)
     if (!core->init(vm, nullptr, get_checkpoints))
       throw std::runtime_error("Failed to start core");
 
-    MGINFO("Starting LokiMQ");
+    MGINFO("Starting WorktipsMQ");
     lmq_rpc = std::make_unique<cryptonote::rpc::lmq_rpc>(*core, *rpc, vm);
-    core->start_lokimq();
+    core->start_worktipsmq();
 
     for(auto& [desc, rpc]: http_rpcs)
     {

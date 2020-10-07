@@ -1,5 +1,5 @@
 // Copyright (c) 2014-2019, The Monero Project
-// Copyright (c) 2018-2019, The Loki Project
+// Copyright (c) 2018-2019, The Worktips Project
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, are
@@ -50,8 +50,8 @@
 #include "cryptonote_core/service_node_list.h"
 #include "cryptonote_basic/hardfork.h"
 
-#undef LOKI_DEFAULT_LOG_CATEGORY
-#define LOKI_DEFAULT_LOG_CATEGORY "blockchain.db.lmdb"
+#undef WORKTIPS_DEFAULT_LOG_CATEGORY
+#define WORKTIPS_DEFAULT_LOG_CATEGORY "blockchain.db.lmdb"
 
 
 using epee::string_tools::pod_to_hex;
@@ -1565,7 +1565,7 @@ void BlockchainLMDB::open(const std::string& filename, cryptonote::network_type 
       if (mdb_flags & MDB_RDONLY)
       {
         MFATAL("Existing lmdb database needs to be converted, which cannot be done on a read-only database.");
-        MFATAL("Please run lokid once to convert the database.");
+        MFATAL("Please run worktipsd once to convert the database.");
         failed = true;
       }
       else

@@ -1,4 +1,4 @@
-// Copyright (c)      2018, The Loki Project
+// Copyright (c)      2018, The Worktips Project
 //
 // All rights reserved.
 //
@@ -60,8 +60,8 @@ extern "C" {
 #include "service_node_swarm.h"
 #include "version.h"
 
-#undef LOKI_DEFAULT_LOG_CATEGORY
-#define LOKI_DEFAULT_LOG_CATEGORY "service_nodes"
+#undef WORKTIPS_DEFAULT_LOG_CATEGORY
+#define WORKTIPS_DEFAULT_LOG_CATEGORY "service_nodes"
 
 namespace service_nodes
 {
@@ -454,7 +454,7 @@ namespace service_nodes
     // R := TX Public Key
     // G := Elliptic Curve
 
-    // In Loki we pack into the tx extra information to reveal information about the TX
+    // In Worktips we pack into the tx extra information to reveal information about the TX
     // A := Public View Key (we pack contributor into tx extra, 'parsed_contribution.address')
     // r := TX Secret Key   (we pack secret key into tx extra,  'parsed_contribution.tx_key`)
 
@@ -833,7 +833,7 @@ namespace service_nodes
                               });
       if (cit != contributor.locked_contributions.end())
       {
-        // NOTE(loki): This should be checked in blockchain check_tx_inputs already
+        // NOTE(worktips): This should be checked in blockchain check_tx_inputs already
         crypto::hash const hash = service_nodes::generate_request_stake_unlock_hash(unlock.nonce);
         if (crypto::check_signature(hash, cit->key_image_pub_key, unlock.signature))
         {
@@ -1002,7 +1002,7 @@ namespace service_nodes
 
     if (hf_version >= cryptonote::network_version_11_infinite_staking)
     {
-      // NOTE(loki): Grace period is not used anymore with infinite staking. So, if someone somehow reregisters, we just ignore it
+      // NOTE(worktips): Grace period is not used anymore with infinite staking. So, if someone somehow reregisters, we just ignore it
       const auto iter = service_nodes_infos.find(key);
       if (iter != service_nodes_infos.end())
         return false;
@@ -1241,7 +1241,7 @@ namespace service_nodes
     std::bitset<8 * sizeof(block.pulse.validator_bitset)> const validator_bitset = block.pulse.validator_bitset;
     stream << "Block(" << cryptonote::get_block_height(block) << "): " << cryptonote::get_block_hash(block) << "\n";
     stream << "Leader: ";
-    if (quorum) stream << (quorum->workers.empty() ? "(invalid leader)" : lokimq::to_hex(tools::view_guts(quorum->workers[0]))) << "\n";
+    if (quorum) stream << (quorum->workers.empty() ? "(invalid leader)" : worktipsmq::to_hex(tools::view_guts(quorum->workers[0]))) << "\n";
     else        stream << "(invalid quorum)\n";
     stream << "Round: " << +block.pulse.round << "\n";
     stream << "Validator Bitset: " << validator_bitset << "\n";
@@ -1255,8 +1255,8 @@ namespace service_nodes
       stream << "  [" << +entry.voter_index << "] validator: ";
       if (quorum)
       {
-        stream << ((entry.voter_index >= quorum->validators.size()) ? "(invalid quorum index)" : lokimq::to_hex(tools::view_guts(quorum->validators[entry.voter_index])));
-        stream << ", signature: " << lokimq::to_hex(tools::view_guts(entry.signature));
+        stream << ((entry.voter_index >= quorum->validators.size()) ? "(invalid quorum index)" : worktipsmq::to_hex(tools::view_guts(quorum->validators[entry.voter_index])));
+        stream << ", signature: " << worktipsmq::to_hex(tools::view_guts(entry.signature));
       }
       else stream << "(invalid quorum)";
     }
@@ -1895,7 +1895,7 @@ namespace service_nodes
 
           size_t total_nodes = active_snode_list.size();
 
-          // TODO(loki): Soft fork, remove when testnet gets reset
+          // TODO(worktips): Soft fork, remove when testnet gets reset
           if (nettype == cryptonote::TESTNET && state.height < 85357)
             total_nodes = active_snode_list.size() + decomm_snode_list.size();
 
@@ -2171,7 +2171,7 @@ namespace service_nodes
         m_transient.state_history.erase(std::next(it), m_transient.state_history.end());
     }
 
-    // TODO(loki): We should loop through the prev 10k heights for robustness, but avoid for v4.0.5. Already enough changes going in
+    // TODO(worktips): We should loop through the prev 10k heights for robustness, but avoid for v4.0.5. Already enough changes going in
     if (reinitialise) // Try finding the next closest old state at 10k intervals
     {
       uint64_t prev_interval = revert_to_height - (revert_to_height % STORE_LONG_TERM_STATE_INTERVAL);
@@ -2207,7 +2207,7 @@ namespace service_nodes
     std::vector<crypto::public_key> expired_nodes;
     uint64_t const lock_blocks = staking_num_lock_blocks(nettype);
 
-    // TODO(loki): This should really use the registration height instead of getting the block and expiring nodes.
+    // TODO(worktips): This should really use the registration height instead of getting the block and expiring nodes.
     // But there's something subtly off when using registration height causing syncing problems.
     if (hf_version == cryptonote::network_version_9_service_nodes)
     {
@@ -2324,7 +2324,7 @@ namespace service_nodes
     // Because FP math is involved in reward calculations (and compounded by CPUs, compilers,
     // expression contraction, and RandomX fiddling with the rounding modes) we can end up with a
     // 1 ULP difference in the reward calculations.
-    // TODO(loki): eliminate all FP math from reward calculations
+    // TODO(worktips): eliminate all FP math from reward calculations
     if (!within_one(output.amount, reward))
     {
       MGINFO_RED("Service node reward amount incorrect. Should be " << cryptonote::print_money(reward) << ", is: " << cryptonote::print_money(output.amount));
@@ -2337,7 +2337,7 @@ namespace service_nodes
       return false;
     }
 
-    // NOTE: Loki uses the governance key in the one-time ephemeral key
+    // NOTE: Worktips uses the governance key in the one-time ephemeral key
     // derivation for both Pulse Block Producer/Queued Service Node Winner rewards
     crypto::key_derivation derivation{};
     crypto::public_key out_eph_public_key{};
@@ -2368,7 +2368,7 @@ namespace service_nodes
     cryptonote::transaction const &miner_tx = block.miner_tx;
 
     // NOTE: Basic queued service node list winner checks
-    // NOTE(loki): Service node reward distribution is calculated from the
+    // NOTE(worktips): Service node reward distribution is calculated from the
     // original amount, i.e. 50% of the original base reward goes to service
     // nodes not 50% of the reward after removing the governance component (the
     // adjusted base reward post hardfork 10).
@@ -2693,7 +2693,7 @@ namespace service_nodes
          it != m_transient.state_history.end() && it->height <= max_short_term_height;
          it++)
     {
-      // TODO(loki): There are 2 places where we convert a state_t to be a serialized state_t without quorums. We should only do this in one location for clarity.
+      // TODO(worktips): There are 2 places where we convert a state_t to be a serialized state_t without quorums. We should only do this in one location for clarity.
       m_transient.cache_short_term_data.states.push_back(serialize_service_node_state_object(hf_version, *it, it->height < max_short_term_height /*only_serialize_quorums*/));
     }
 
@@ -2755,7 +2755,7 @@ namespace service_nodes
     assert(m_service_node_keys);
     const auto& keys = *m_service_node_keys;
     cryptonote::NOTIFY_UPTIME_PROOF::request result = {};
-    result.snode_version                            = LOKI_VERSION;
+    result.snode_version                            = WORKTIPS_VERSION;
     result.timestamp                                = time(nullptr);
     result.pubkey                                   = keys.pub;
     result.public_ip                                = public_ip;
@@ -2863,7 +2863,7 @@ namespace service_nodes
 
     for (auto const &min : MIN_UPTIME_PROOF_VERSIONS)
       if (hf_version >= min.hardfork && proof.snode_version < min.version)
-        REJECT_PROOF("v" << min.version[0] << "." << min.version[1] << "." << min.version[2] << "+ loki version is required for v" << std::to_string(hf_version) << "+ network proofs");
+        REJECT_PROOF("v" << min.version[0] << "." << min.version[1] << "." << min.version[2] << "+ worktips version is required for v" << std::to_string(hf_version) << "+ network proofs");
 
     if (!debug_allow_local_ips && !epee::net_utils::is_ip_public(proof.public_ip))
       REJECT_PROOF("public_ip is not actually public");
@@ -3107,7 +3107,7 @@ namespace service_nodes
       }
       if (info.version < version_t::v5_pulse_recomm_credit)
       {
-        // If it's an old record then assume it's from before loki 8, in which case there were only
+        // If it's an old record then assume it's from before worktips 8, in which case there were only
         // two valid values here: initial for a node that has never been recommissioned, or 0 for a recommission.
 
         auto was = info.recommission_credit;
@@ -3412,7 +3412,7 @@ namespace service_nodes
     }
 
     //
-    // FIXME(doyle): FIXME(loki) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // FIXME(doyle): FIXME(worktips) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // This is temporary code to redistribute the insufficient portion dust
     // amounts between contributors. It should be removed in HF12.
     //
@@ -3420,13 +3420,13 @@ namespace service_nodes
     std::array<uint64_t, MAX_NUMBER_OF_CONTRIBUTORS> min_contributions;
     {
       // NOTE: Calculate excess portions from each contributor
-      uint64_t loki_reserved = 0;
+      uint64_t worktips_reserved = 0;
       for (size_t index = 0; index < addr_to_portions.size(); ++index)
       {
         addr_to_portion_t const &addr_to_portion = addr_to_portions[index];
-        uint64_t min_contribution_portions       = service_nodes::get_min_node_contribution_in_portions(hf_version, staking_requirement, loki_reserved, index);
-        uint64_t loki_amount                     = service_nodes::portions_to_amount(staking_requirement, addr_to_portion.portions);
-        loki_reserved                           += loki_amount;
+        uint64_t min_contribution_portions       = service_nodes::get_min_node_contribution_in_portions(hf_version, staking_requirement, worktips_reserved, index);
+        uint64_t worktips_amount                     = service_nodes::portions_to_amount(staking_requirement, addr_to_portion.portions);
+        worktips_reserved                           += worktips_amount;
 
         uint64_t excess = 0;
         if (addr_to_portion.portions > min_contribution_portions)
@@ -3495,8 +3495,8 @@ namespace service_nodes
       portions_left += portions_to_steal;
       result.addresses.push_back(addr_to_portion.info.address);
       result.portions.push_back(addr_to_portion.portions);
-      uint64_t loki_amount = service_nodes::portions_to_amount(addr_to_portion.portions, staking_requirement);
-      total_reserved      += loki_amount;
+      uint64_t worktips_amount = service_nodes::portions_to_amount(addr_to_portion.portions, staking_requirement);
+      total_reserved      += worktips_amount;
     }
 
     result.success = true;
