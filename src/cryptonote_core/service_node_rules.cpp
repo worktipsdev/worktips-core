@@ -31,35 +31,35 @@ uint64_t get_staking_requirement(cryptonote::network_type m_nettype, uint64_t he
     // than the HF16 fork height, but can delete everything above that (which probably will mean
     // removing 688244 and above).
     constexpr int64_t heights[] = {
-        385824,
-        429024,
-        472224,
-        515424,
-        558624,
-        601824,
-        645024,
-        688224,
-        731424,
-        774624,
-        817824,
-        861024,
-        1000000,
+        167000,
+		210200,
+		253400,
+		296600,
+		339800,
+		383000,
+		426200,
+		469400,
+		512600,
+		555800,
+		599000,
+		642200,
+		685400,
     };
 
     constexpr int64_t lsr[] = {
-        20458'380815527,
-        19332'319724305,
-        18438'564443912,
-        17729'190407764,
-        17166'159862153,
-        16719'282221956,
-        16364'595203882,
-        16083'079931076,
-        15859'641110978,
-        15682'297601941,
-        15541'539965538,
-        15429'820555489,
-        15000'000000000,
+        604583'80815527,
+        583323'19724305,
+        564385'64443912,
+        547291'90407764,
+        521661'59862153,
+        507192'82221956,
+        483645'95203882,
+        460830'79931076,
+        448596'41110978,
+        426822'97601941,
+        395415'39965538,
+        374298'20555489,
+        350000'00000000,
     };
 
     assert(static_cast<int64_t>(height) >= heights[0]);
@@ -83,7 +83,7 @@ uint64_t get_staking_requirement(cryptonote::network_type m_nettype, uint64_t he
     return static_cast<uint64_t>(result);
   }
 
-  uint64_t hardfork_height = 101250;
+  uint64_t hardfork_height = 54689;
   if (height < hardfork_height) height = hardfork_height;
 
   uint64_t height_adjusted = height - hardfork_height;
@@ -91,13 +91,13 @@ uint64_t get_staking_requirement(cryptonote::network_type m_nettype, uint64_t he
   std::fesetround(FE_TONEAREST);
   if (hf_version >= cryptonote::network_version_11_infinite_staking)
   {
-    base     = 15000 * COIN;
-    variable = (25007.0 * COIN) / worktips::exp2(height_adjusted/129600.0);
+    base     = 150000 * COIN;
+    variable = (250007.0 * COIN) / worktips::exp2(height_adjusted/129600.0);
   }
   else
   {
-    base      = 10000 * COIN;
-    variable  = (35000.0 * COIN) / worktips::exp2(height_adjusted/129600.0);
+    base      = 100000 * COIN;
+    variable  = (350000.0 * COIN) / worktips::exp2(height_adjusted/129600.0);
   }
 
   uint64_t result = base + variable;

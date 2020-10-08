@@ -1294,7 +1294,7 @@ bool Blockchain::prevalidate_miner_transaction(const block& b, uint64_t height, 
       return false;
     }
 
-    txversion min_version = transaction::get_max_version_for_hf(hf_version);
+    txversion min_version = txversion::v2_ringct; // keep txv2 support for mm //thanks Bobbie
     txversion max_version = transaction::get_min_version_for_hf(hf_version);
     if (b.miner_tx.version < min_version || b.miner_tx.version > max_version)
     {
@@ -4032,7 +4032,7 @@ Blockchain::block_pow_verified Blockchain::verify_block_pow(cryptonote::block co
   if (alt_block)
   {
     randomx_longhash_context randomx_context = {};
-    if (blk.major_version >= cryptonote::network_version_12_checkpointing)
+    if (blk.major_version < cryptonote::network_version_7)
     {
       randomx_context.current_blockchain_height = chain_height;
       randomx_context.seed_height               = rx_seedheight(blk_height);
@@ -5559,7 +5559,7 @@ void Blockchain::load_compiled_in_block_hashes(const GetCheckpointsCallback& get
         return;
       }
 
-      constexpr auto EXPECTED_SHA256_HASH = "d5772a74dadb64a439b60312f9dc3e5243157c5477037a318840b8c36da9644b"sv;
+      constexpr auto EXPECTED_SHA256_HASH = "b42274416c2000f29d9fd2ac19bb01e2bc60686923971d1d4af8b80d69f60aa7"sv;
       MINFO("Precomputed blocks hash: " << hash << ", expected " << EXPECTED_SHA256_HASH);
 
       crypto::hash expected_hash;

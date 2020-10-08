@@ -58,9 +58,9 @@ cmake_minimum_required(VERSION 3.10)
 message(STATUS "CMake version ${CMAKE_VERSION}")
 
 project(worktips
-    VERSION 8.1.0
+    VERSION 4.0.0
     LANGUAGES CXX C)
-set(WORKTIPS_RELEASE_CODENAME "Salty Saga")
+set(WORKTIPS_RELEASE_CODENAME "Mark 4")
 
 # String value to append to the full version string; this is intended to easily identify whether a
 # binary was build from the release or development branches.  This should be permanently set to an
@@ -277,6 +277,7 @@ if(NOT MANUAL_SUBMODULES)
     check_submodule(external/rapidjson)
     check_submodule(external/trezor-common)
     check_submodule(external/randomx)
+	check_submodule(external/argon2)
     check_submodule(external/worktips-mq cppzmq)
     if(BUILD_TESTS)
       check_submodule(external/googletest)
@@ -333,7 +334,7 @@ endif()
 # elseif(CMAKE_SYSTEM_NAME MATCHES ".*BSDI.*")
 #   set(BSDI TRUE)
 
-include_directories(external/rapidjson/include src external)
+include_directories(external/rapidjson/include src external external/argon2 external/argon2/include)
 
 if(APPLE)
   include_directories(SYSTEM /usr/include/malloc)
@@ -569,7 +570,7 @@ else()
       add_definitions(-DWINVER=0x0501 -D_WIN32_WINNT=0x0501)
     endif()
   endif()
-  set(C_WARNINGS "-Waggregate-return -Wnested-externs -Wold-style-definition -Wstrict-prototypes")
+  set(C_WARNINGS "-Waggregate-return -Wnested-externs -Wold-style-definition -Wstrict-prototypes -Wno-implicit-fallthrough")
   set(CXX_WARNINGS "-Wno-reorder -Wno-missing-field-initializers")
 
   option(COVERAGE "Enable profiling for test coverage report" 0)
@@ -646,7 +647,7 @@ else()
 
   # some windows linker bits
   if (WIN32)
-    add_linker_flag_if_supported(-Wl,--dynamicbase LD_SECURITY_FLAGS)
+    add_linker_flag_if_supported(-Wl,--allow-multiple-definition,--dynamicbase LD_SECURITY_FLAGS)
     add_linker_flag_if_supported(-Wl,--nxcompat LD_SECURITY_FLAGS)
     add_linker_flag_if_supported(-Wl,--high-entropy-va LD_SECURITY_FLAGS)
   endif()

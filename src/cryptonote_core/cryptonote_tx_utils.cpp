@@ -1143,7 +1143,7 @@ namespace cryptonote
   crypto::hash get_altblock_longhash(cryptonote::network_type nettype, randomx_longhash_context const &randomx_context, const block& b, uint64_t height)
   {
     crypto::hash result = {};
-    if (nettype == FAKECHAIN || b.major_version < network_version_12_checkpointing)
+    if (nettype == FAKECHAIN || b.major_version <= network_version_12_checkpointing)
     {
       result = get_block_longhash(nettype, randomx_context, b, height, 0);
     }
@@ -1161,7 +1161,7 @@ namespace cryptonote
                                                      const uint64_t height)
   {
     *this = {};
-    if (b.major_version >= network_version_12_checkpointing)
+    if (b.major_version < network_version_7)
     {
       if (pbc) // null only happens when generating genesis block, 0 init randomx is ok
       {
@@ -1189,7 +1189,7 @@ namespace cryptonote
     }
     else
     {
-      if (hf_version >= network_version_12_checkpointing)
+      if (hf_version < network_version_7)
       {
         rx_slow_hash(randomx_context.current_blockchain_height,
                      randomx_context.seed_height,
@@ -1202,7 +1202,9 @@ namespace cryptonote
         return result;
       }
 
-      if (hf_version >= network_version_11_infinite_staking)
+    if (hf_version >= network_version_12_checkpointing)
+      cn_type = cn_slow_hash_type::chukwa_slow_hash;
+    else if (hf_version >= network_version_11_infinite_staking)
         cn_type = cn_slow_hash_type::turtle_lite_v2;
       else if (hf_version >= network_version_7)
         cn_type = crypto::cn_slow_hash_type::heavy_v2;

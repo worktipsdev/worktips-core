@@ -1296,7 +1296,7 @@ namespace cryptonote { namespace rpc {
     const uint8_t major_version = m_core.get_blockchain_storage().get_current_hard_fork_version();
 
     res.pow_algorithm =
-        major_version >= network_version_12_checkpointing    ? "RandomX (WORKTIPS variant)"               :
+        major_version >= network_version_12_checkpointing    ? "Chukwa Variant 2 (Turtle variant)"               :
         major_version == network_version_11_infinite_staking ? "Cryptonight Turtle Light (Variant 2)" :
                                                                "Cryptonight Heavy (Variant 2)";
 
@@ -1643,7 +1643,7 @@ namespace cryptonote { namespace rpc {
       throw rpc_error{ERROR_INTERNAL, "Internal error: failed to create block template"};
     }
 
-    if (b.major_version >= network_version_12_checkpointing)
+    if (b.major_version < network_version_7)
     {
       uint64_t seed_height, next_height;
       crypto::hash seed_hash;
