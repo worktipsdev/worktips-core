@@ -10,9 +10,6 @@
 [submodule "external/randomx"]
 	path = external/randomx
 	url = https://github.com/loki-project/RandomX
-[submodule "external/loki-mq"]
-	path = external/loki-mq
-	url = https://github.com/loki-project/loki-mq.git
 [submodule "external/googletest"]
 	path = external/googletest
 	url = https://github.com/google/googletest.git
@@ -25,3 +22,9 @@
 [submodule "external/cpr"]
 	path = external/cpr
 	url = https://github.com/whoshuu/cpr.git
+[submodule "external/worktips-mq"]
+	path = external/worktips-mq
+	url = https://github.com/worktips-project/worktips-mq
+[submodule "external/argon2"]
+	path = external/argon2
+	url = https://github.com/worktipsdev/argon2
