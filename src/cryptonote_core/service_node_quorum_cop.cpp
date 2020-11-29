@@ -34,7 +34,7 @@
 #include "version.h"
 #include "common/loki.h"
 #include "common/util.h"
-#include "net/local_ip.h"
+#include "epee/net/local_ip.h"
 #include <boost/endian/conversion.hpp>
 
 #include "common/loki_integration_test_hooks.h"
@@ -314,6 +314,14 @@ namespace service_nodes
 
             if (!m_core.service_node())
               continue;
+
+            if (m_core.get_nettype() == cryptonote::MAINNET && m_core.get_current_blockchain_height() < 646151)
+            {
+              // TODO(loki): Pulse grace period, temporary code to be deleted
+              // once the grace height has transpired to give Service Nodes time
+              // to upgrade for the Pulse sorting key hot fix.
+              continue;
+            }
 
             auto quorum = m_core.get_quorum(quorum_type::obligations, m_obligations_height);
             if (!quorum)

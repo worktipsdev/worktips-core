@@ -40,17 +40,18 @@ extern "C" {
 }
 
 #include "ringct/rctSigs.h"
-#include "net/local_ip.h"
+#include "epee/net/local_ip.h"
 #include "cryptonote_tx_utils.h"
 #include "cryptonote_basic/tx_extra.h"
 #include "cryptonote_basic/hardfork.h"
-#include "int-util.h"
+#include "epee/int-util.h"
 #include "common/scoped_message_writer.h"
 #include "common/i18n.h"
 #include "common/util.h"
 #include "common/random.h"
 #include "common/lock.h"
-#include "misc_os_dependent.h"
+#include "common/hex.h"
+#include "epee/misc_os_dependent.h"
 #include "blockchain.h"
 #include "service_node_quorum_cop.h"
 
@@ -355,10 +356,10 @@ namespace service_nodes
       throw invalid_contributions{"Failed to generate registration hash"};
 
     if (!crypto::check_key(service_node_key))
-      throw invalid_contributions{"Service Node Key was not a valid crypto key" + epee::string_tools::pod_to_hex(service_node_key)};
+      throw invalid_contributions{"Service Node Key was not a valid crypto key" + tools::type_to_hex(service_node_key)};
 
     if (!crypto::check_signature(hash, service_node_key, signature))
-      throw invalid_contributions{"Failed to validate service node with key:" + epee::string_tools::pod_to_hex(service_node_key) + " and hash: " + epee::string_tools::pod_to_hex(hash)};
+      throw invalid_contributions{"Failed to validate service node with key:" + tools::type_to_hex(service_node_key) + " and hash: " + tools::type_to_hex(hash)};
   }
 
   struct parsed_tx_contribution
@@ -519,7 +520,7 @@ namespace service_nodes
           }
 
           // Stealth address public key should match the public key referenced in the TX only if valid information is given.
-          const auto& out_to_key = std::get<cryptonote::txout_to_key>(tx.vout[output_index].target);
+          const auto& out_to_key = var::get<cryptonote::txout_to_key>(tx.vout[output_index].target);
           if (out_to_key.key != ephemeral_pub_key)
           {
             LOG_PRINT_L1("TX: Derived TX ephemeral key did not match tx stored key on height: " << block_height << " for tx: " << cryptonote::get_transaction_hash(tx) << " for output: " << output_index);
@@ -1354,7 +1355,7 @@ namespace service_nodes
                                                                          height,
                                                                          hash,
                                                                          block.signatures,
-                                                                         block) == false;
+                                                                         &block) == false;
         }
 
         // NOTE: Check alt pulse quorums
@@ -1369,7 +1370,7 @@ namespace service_nodes
                                                         height,
                                                         hash,
                                                         block.signatures,
-                                                        block))
+                                                        &block))
             {
               failed_quorum_verify = false;
               break;
@@ -1397,7 +1398,7 @@ namespace service_nodes
                                                                   cryptonote::get_block_height(block),
                                                                   cryptonote::get_block_hash(block),
                                                                   block.signatures,
-                                                                  block);
+                                                                  &block);
       }
 
       if (quorum_verified)
@@ -1766,6 +1767,12 @@ namespace service_nodes
     }
 
     return get_pulse_entropy_for_next_block(db, top_block, pulse_round);
+  }
+
+  std::vector<crypto::hash> get_pulse_entropy_for_next_block(cryptonote::BlockchainDB const &db,
+                                                             uint8_t pulse_round)
+  {
+    return get_pulse_entropy_for_next_block(db, db.get_top_block(), pulse_round);
   }
 
   service_nodes::quorum generate_pulse_quorum(cryptonote::network_type nettype,
@@ -2348,7 +2355,7 @@ namespace service_nodes
     r = crypto::derive_public_key(derivation, output_index, receiver.m_spend_public_key, out_eph_public_key);
     CHECK_AND_ASSERT_MES(r, false, "while creating outs: failed to derive_public_key(" << derivation << ", " << output_index << ", "<< receiver.m_spend_public_key << ")");
 
-    if (std::get<cryptonote::txout_to_key>(output.target).key != out_eph_public_key)
+    if (var::get<cryptonote::txout_to_key>(output.target).key != out_eph_public_key)
     {
       MGINFO_RED("Invalid service node reward at output: " << output_index << ", output key, specifies wrong key");
       return false;
@@ -2878,7 +2885,7 @@ namespace service_nodes
 
     crypto::x25519_public_key derived_x25519_pubkey = crypto::x25519_public_key::null();
     if (!proof.pubkey_ed25519)
-      REJECT_PROOF("required ed25519 auxiliary pubkey " << epee::string_tools::pod_to_hex(proof.pubkey_ed25519) << " not included in proof");
+      REJECT_PROOF("required ed25519 auxiliary pubkey " << proof.pubkey_ed25519 << " not included in proof");
 
     if (0 != crypto_sign_verify_detached(proof.sig_ed25519.data, reinterpret_cast<unsigned char *>(hash.data), sizeof(hash.data), proof.pubkey_ed25519.data))
       REJECT_PROOF("ed25519 signature validation failed");
@@ -3118,6 +3125,11 @@ namespace service_nodes
 
         info.pulse_sorter.last_height_validating_in_quorum = info.last_reward_block_height;
         info.version = version_t::v5_pulse_recomm_credit;
+      }
+      if (info.version < version_t::v6_reassign_sort_keys)
+      {
+        info.pulse_sorter = {};
+        info.version      = version_t::v6_reassign_sort_keys;
       }
       // Make sure we handled any future state version upgrades:
       assert(info.version == tools::enum_top<decltype(info.version)>);
@@ -3544,9 +3556,7 @@ namespace service_nodes
       stream << " " << args[i];
     }
 
-    stream << " " << exp_timestamp << " ";
-    stream << epee::string_tools::pod_to_hex(keys.pub) << " ";
-    stream << epee::string_tools::pod_to_hex(signature);
+    stream << " " << exp_timestamp << " " << tools::type_to_hex(keys.pub) << " " << tools::type_to_hex(signature);
 
     if (make_friendly)
     {

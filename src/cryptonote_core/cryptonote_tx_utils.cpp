@@ -30,8 +30,7 @@
 
 #include <unordered_set>
 #include <random>
-#include "include_base_utils.h"
-#include "string_tools.h"
+#include "epee/string_tools.h"
 #include "common/apply_permutation.h"
 #include "common/hex.h"
 #include "cryptonote_tx_utils.h"
@@ -43,7 +42,7 @@
 #include "crypto/hash.h"
 #include "ringct/rctSigs.h"
 #include "multisig/multisig.h"
-#include "int-util.h"
+#include "epee/int-util.h"
 
 using namespace crypto;
 
@@ -461,7 +460,26 @@ namespace cryptonote
       summary_amounts += amount;
     }
 
-    uint64_t expected_amount = reward_parts.base_miner + reward_parts.miner_fee + reward_parts.governance_paid + reward_parts.service_node_total;
+    uint64_t expected_amount = 0;
+    if (hard_fork_version <= cryptonote::network_version_15_lns)
+    {
+      // NOTE: Use the amount actually paid out when we split the service node
+      // reward (across up to 4 recipients) which may actually pay out less than
+      // the total reward allocated for Service Nodes (due to remainder from
+      // division). This occurred prior to HF15, after that we redistribute dust
+      // properly.
+      expected_amount = reward_parts.base_miner + reward_parts.miner_fee + reward_parts.governance_paid;
+      for (size_t reward_index = 0; reward_index < rewards_length; reward_index++)
+      {
+        [[maybe_unused]] auto const &[type, address, amount] = rewards[reward_index];
+        if (type == reward_type::snode) expected_amount += amount;
+      }
+    }
+    else
+    {
+      expected_amount = reward_parts.base_miner + reward_parts.miner_fee + reward_parts.governance_paid + reward_parts.service_node_total;
+    }
+
     CHECK_AND_ASSERT_MES(summary_amounts == expected_amount, false, "Failed to construct miner tx, summary_amounts = " << summary_amounts << " not equal total block_reward = " << expected_amount);
     CHECK_AND_ASSERT_MES(tx.vout.size() == rewards_length, false, "TX output mis-match with rewards expected: " << rewards_length << ", tx outputs: " << tx.vout.size());
 
@@ -736,8 +754,8 @@ namespace cryptonote
       if(!msout && !(in_ephemeral.pub == src_entr.outputs[src_entr.real_output].second.dest) )
       {
         LOG_ERROR("derived public key mismatch with output public key at index " << idx << ", real out " << src_entr.real_output << "!\nderived_key:"
-          << epee::string_tools::pod_to_hex(in_ephemeral.pub) << "\nreal output_public_key:"
-          << epee::string_tools::pod_to_hex(src_entr.outputs[src_entr.real_output].second.dest) );
+          << tools::type_to_hex(in_ephemeral.pub) << "\nreal output_public_key:"
+          << tools::type_to_hex(src_entr.outputs[src_entr.real_output].second.dest) );
         LOG_ERROR("amount " << src_entr.amount << ", rct " << src_entr.rct);
         LOG_ERROR("tx pubkey " << src_entr.real_out_tx_key << ", real_output_in_tx_index " << src_entr.real_output_in_tx_index);
         return false;
@@ -766,8 +784,8 @@ namespace cryptonote
     for (size_t n = 0; n < sources.size(); ++n)
       ins_order[n] = n;
     std::sort(ins_order.begin(), ins_order.end(), [&](const size_t i0, const size_t i1) {
-      const txin_to_key &tk0 = std::get<txin_to_key>(tx.vin[i0]);
-      const txin_to_key &tk1 = std::get<txin_to_key>(tx.vin[i1]);
+      const txin_to_key &tk0 = var::get<txin_to_key>(tx.vin[i0]);
+      const txin_to_key &tk1 = var::get<txin_to_key>(tx.vin[i1]);
       return memcmp(&tk0.k_image, &tk1.k_image, sizeof(tk0.k_image)) > 0;
     });
     tools::apply_permutation(ins_order, [&] (size_t i0, size_t i1) {
@@ -932,7 +950,7 @@ namespace cryptonote
         std::vector<crypto::signature>& sigs = tx.signatures.back();
         sigs.resize(src_entr.outputs.size());
         if (!zero_secret_key)
-          crypto::generate_ring_signature(tx_prefix_hash, std::get<txin_to_key>(tx.vin[i]).k_image, keys_ptrs, in_contexts[i].in_ephemeral.sec, src_entr.real_output, sigs.data());
+          crypto::generate_ring_signature(tx_prefix_hash, var::get<txin_to_key>(tx.vin[i]).k_image, keys_ptrs, in_contexts[i].in_ephemeral.sec, src_entr.real_output, sigs.data());
         ss_ring_s << "signatures:\n";
         std::for_each(sigs.begin(), sigs.end(), [&](const crypto::signature& s){ss_ring_s << s << "\n";});
         ss_ring_s << "prefix_hash:" << tx_prefix_hash << "\nin_ephemeral_key: " << in_contexts[i].in_ephemeral.sec << "\nreal_output: " << src_entr.real_output << "\n";
@@ -999,7 +1017,7 @@ namespace cryptonote
       }
       for (size_t i = 0; i < tx.vout.size(); ++i)
       {
-        destinations.push_back(rct::pk2rct(std::get<txout_to_key>(tx.vout[i].target).key));
+        destinations.push_back(rct::pk2rct(var::get<txout_to_key>(tx.vout[i].target).key));
         outamounts.push_back(tx.vout[i].amount);
         amount_out += tx.vout[i].amount;
       }
@@ -1051,7 +1069,7 @@ namespace cryptonote
       for (size_t i = 0; i < tx.vin.size(); ++i)
       {
         if (sources[i].rct)
-          std::get<txin_to_key>(tx.vin[i]).amount = 0;
+          var::get<txin_to_key>(tx.vin[i]).amount = 0;
       }
       for (size_t i = 0; i < tx.vout.size(); ++i)
         tx.vout[i].amount = 0;

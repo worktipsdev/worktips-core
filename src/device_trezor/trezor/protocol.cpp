@@ -39,6 +39,7 @@
 #include <ringct/rctSigs.h>
 #include <ringct/bulletproofs.h>
 #include "cryptonote_config.h"
+#include "common/hex.h"
 #include <sodium.h>
 #include <sodium/crypto_verify_32.h>
 #include <sodium/crypto_aead_chacha20poly1305.h>
@@ -156,7 +157,7 @@ namespace ki {
       res.emplace_back();
       auto & cres = res.back();
 
-      cres.set_out_key(key_to_string(std::get<cryptonote::txout_to_key>(td.m_tx.vout[td.m_internal_output_index].target).key));
+      cres.set_out_key(key_to_string(var::get<cryptonote::txout_to_key>(td.m_tx.vout[td.m_internal_output_index].target).key));
       cres.set_tx_pub_key(key_to_string(tx_pub_key));
       cres.set_internal_output_index(td.m_internal_output_index);
       cres.set_sub_addr_major(td.m_subaddr_index.major);
@@ -269,12 +270,12 @@ namespace ki {
     pkeys.push_back(&out_key);
 
     CHECK_AND_ASSERT_THROW_MES(rct::scalarmultKey(rct::ki2rct(ki), rct::curveOrder()) == rct::identity(),
-                               "Key image out of validity domain: key image " << epee::string_tools::pod_to_hex(ki));
+                               "Key image out of validity domain: key image " << tools::type_to_hex(ki));
 
     CHECK_AND_ASSERT_THROW_MES(::crypto::check_ring_signature((const ::crypto::hash&)ki, ki, pkeys, &sig),
-                               "Signature failed for key image " << epee::string_tools::pod_to_hex(ki)
-                                                                 << ", signature " + epee::string_tools::pod_to_hex(sig)
-                                                                 << ", pubkey " + epee::string_tools::pod_to_hex(*pkeys[0]));
+                               "Signature failed for key image " << tools::type_to_hex(ki)
+                                                                 << ", signature " + tools::type_to_hex(sig)
+                                                                 << ", pubkey " + tools::type_to_hex(*pkeys[0]));
   }
 }
 
@@ -644,8 +645,8 @@ namespace tx {
 
     CHECK_AND_ASSERT_THROW_MES(m_ct.tx.vin.size() == input_size, "Invalid vector size");
     std::sort(m_ct.source_permutation.begin(), m_ct.source_permutation.end(), [&](const size_t i0, const size_t i1) {
-      const cryptonote::txin_to_key &tk0 = std::get<cryptonote::txin_to_key>(m_ct.tx.vin[i0]);
-      const cryptonote::txin_to_key &tk1 = std::get<cryptonote::txin_to_key>(m_ct.tx.vin[i1]);
+      const cryptonote::txin_to_key &tk0 = var::get<cryptonote::txin_to_key>(m_ct.tx.vin[i0]);
+      const cryptonote::txin_to_key &tk1 = var::get<cryptonote::txin_to_key>(m_ct.tx.vin[i1]);
       return memcmp(&tk0.k_image, &tk1.k_image, sizeof(tk0.k_image)) > 0;
     });
 
@@ -825,7 +826,7 @@ namespace tx {
     }
 
     m_ct.tx_out_rsigs.emplace_back(bproof);
-    if (!rct::bulletproof_VERIFY(std::get<rct::Bulletproof>(m_ct.tx_out_rsigs.back()))) {
+    if (!rct::bulletproof_VERIFY(var::get<rct::Bulletproof>(m_ct.tx_out_rsigs.back()))) {
       throw exc::ProtocolException("Returned range signature is invalid");
     }
   }
@@ -905,9 +906,9 @@ namespace tx {
 
     for(size_t i = 0; i < m_ct.tx_out_rsigs.size(); ++i){
       if (is_bulletproof()){
-        m_ct.rv->p.bulletproofs.push_back(std::get<rct::Bulletproof>(m_ct.tx_out_rsigs[i]));
+        m_ct.rv->p.bulletproofs.push_back(var::get<rct::Bulletproof>(m_ct.tx_out_rsigs[i]));
       } else {
-        m_ct.rv->p.rangeSigs.push_back(std::get<rct::rangeSig>(m_ct.tx_out_rsigs[i]));
+        m_ct.rv->p.rangeSigs.push_back(var::get<rct::rangeSig>(m_ct.tx_out_rsigs[i]));
       }
     }
 

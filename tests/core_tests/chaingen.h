@@ -42,7 +42,6 @@
 #include <boost/serialization/vector.hpp>
 
 #include "cryptonote_protocol/quorumnet.h"
-#include "include_base_utils.h"
 #include "common/boost_serialization_helper.h"
 #include "common/command_line.h"
 #include "common/threadpool.h"
@@ -56,7 +55,7 @@
 #include "cryptonote_protocol/quorumnet.h"
 #include "serialization/boost_std_variant.h"
 #include "serialization/boost_std_optional.h"
-#include "misc_language.h"
+#include "epee/misc_language.h"
 
 #include "blockchain_db/testdb.h"
 
@@ -888,7 +887,7 @@ inline bool replay_events_through_core_plain(cryptonote::core& cr, const std::ve
   if (reinit) {
     CHECK_AND_ASSERT_MES(std::holds_alternative<cryptonote::block>(events[0]), false,
                          "First event must be genesis block creation");
-    cr.set_genesis_block(std::get<cryptonote::block>(events[0]));
+    cr.set_genesis_block(var::get<cryptonote::block>(events[0]));
   }
 
   bool r = true;
@@ -896,7 +895,7 @@ inline bool replay_events_through_core_plain(cryptonote::core& cr, const std::ve
   for(size_t i = 1; i < events.size() && r; ++i)
   {
     visitor.event_index(i);
-    r = std::visit(visitor, events[i]);
+    r = var::visit(visitor, events[i]);
   }
 
   return r;

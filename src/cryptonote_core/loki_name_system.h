@@ -3,8 +3,9 @@
 
 #include "crypto/crypto.h"
 #include "cryptonote_config.h"
-#include "span.h"
+#include "epee/span.h"
 #include "cryptonote_basic/tx_extra.h"
+#include "common/fs.h"
 #include <lokimq/hex.h>
 
 #include <cassert>
@@ -105,17 +106,17 @@ struct mapping_value
 };
 inline std::ostream &operator<<(std::ostream &os, mapping_value const &v) { return os << lokimq::to_hex(v.to_view()); }
 
-inline char const *mapping_type_str(mapping_type type)
+inline std::string_view mapping_type_str(mapping_type type)
 {
   switch(type)
   {
-    case mapping_type::lokinet:         return "lokinet"; // general type stored in the database; 1 year when in a purchase tx
-    case mapping_type::lokinet_2years:  return "lokinet_2years";  // Only used in a buy tx, not in the DB
-    case mapping_type::lokinet_5years:  return "lokinet_5years";  // "
-    case mapping_type::lokinet_10years: return "lokinet_10years"; // "
-    case mapping_type::session:         return "session";
-    case mapping_type::wallet:          return "wallet";
-    default: assert(false);             return "xx_unhandled_type";
+    case mapping_type::lokinet:         return "lokinet"sv; // general type stored in the database; 1 year when in a purchase tx
+    case mapping_type::lokinet_2years:  return "lokinet_2years"sv;  // Only used in a buy tx, not in the DB
+    case mapping_type::lokinet_5years:  return "lokinet_5years"sv;  // "
+    case mapping_type::lokinet_10years: return "lokinet_10years"sv; // "
+    case mapping_type::session:         return "session"sv;
+    case mapping_type::wallet:          return "wallet"sv;
+    default: assert(false);             return "xx_unhandled_type"sv;
   }
 }
 inline std::ostream &operator<<(std::ostream &os, mapping_type type) { return os << mapping_type_str(type); }
@@ -130,7 +131,7 @@ constexpr bool mapping_type_allowed(uint8_t hf_version, mapping_type type) {
 // relevant within a LNS buy tx).
 std::vector<mapping_type> all_mapping_types(uint8_t hf_version);
 
-sqlite3 *init_loki_name_system(char const *file_path, bool read_only);
+sqlite3 *init_loki_name_system(const fs::path& file_path, bool read_only);
 
 /// Returns the integer value used in the database and in RPC lookup calls for the given mapping
 /// type.  In particularly this maps all mapping_type::lokinet_Xyears values to the underlying value
