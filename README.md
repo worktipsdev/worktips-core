@@ -10,11 +10,11 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Development resources
 
-- Web: [worktips.network](https://worktips.network)
-- Telegram: [t.me/WorktipsCommunity](https://t.me/WorktipsCommunity)
-- Mail: [team@worktips.network](mailto:team@worktips.network)
-- GitHub: [https://github.com/worktips-project/worktips](https://github.com/worktips-project/worktips)
-- Discord: [https://discord.gg/67GXfD6](https://discord.gg/67GXfD6)
+- Web: 
+- Telegram: 
+- Mail: 
+- GitHub: 
+- Discord: 
 
 ## Vulnerability disclosure
 
