@@ -84,9 +84,6 @@ static_assert(STAKING_PORTIONS % 12 == 0, "Use a multiple of twelve, so that it 
 #define CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE          600
 #define CRYPTONOTE_DISPLAY_DECIMAL_POINT                8
 
-// PREMINE
-
-#define PREMINE											((uint64_t)81600000000000000)
 
 #define FEE_PER_KB                                      ((uint64_t)200000000) // 2 WORKTIPS (= 2 * pow(10, 8))
 #define FEE_PER_BYTE                                    ((uint64_t)215)   // Fallback used in wallet if no fee is available from RPC
