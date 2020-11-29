@@ -107,7 +107,7 @@ namespace crypto {
              0, // pre-hashed
              CN_TURTLE_SCRATCHPAD, CN_TURTLE_ITERATIONS);
       }
-+      break;
+      break;
 	    case cn_slow_hash_type::chukwa_slow_hash:
       default:
       {

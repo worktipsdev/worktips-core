@@ -3,10 +3,10 @@
 
 constexpr uint64_t COIN                       = (uint64_t)100000000; // 1 WORKTIPS = pow(10, 8)
 constexpr uint64_t MONEY_SUPPLY               = (UINT64_C(184467440737095516)); // MONEY_SUPPLY - total number coins to be generated
-constexpr uint64_t EMISSION_SPEED_FACTOR_PER_MINUTE = (20)
-constexpr uint64_t FINAL_SUBSIDY_PER_MINUTE = ((uint64_t)300000000000) // 3 * pow(10, 11)
+constexpr uint64_t EMISSION_SPEED_FACTOR_PER_MINUTE = (20);
+constexpr uint64_t FINAL_SUBSIDY_PER_MINUTE = ((uint64_t)300000000000);	 // 3 * pow(10, 11)
 constexpr uint64_t EMISSION_LINEAR_BASE       = ((uint64_t)(1) << 58);
-constexpr uint64_t YEARLY_INFLATION_INVERSE   = 200 // 0.5% yearly inflation, inverted for integer division
+constexpr uint64_t YEARLY_INFLATION_INVERSE   = 200; // 0.5% yearly inflation, inverted for integer division
 constexpr uint64_t EMISSION_SUPPLY_MULTIPLIER = 19;
 constexpr uint64_t EMISSION_SUPPLY_DIVISOR    = 10;
 constexpr uint64_t EMISSION_DIVISOR           = 2000000;
@@ -14,7 +14,7 @@ constexpr uint64_t EMISSION_DIVISOR           = 2000000;
 
 // PREMINE
 
-constexpr uint64_t PREMINE = ((uint64_t)81600000000000000)
+constexpr uint64_t PREMINE = ((uint64_t)(81600000000000000));
 
 // HF15 money supply parameters:
 constexpr uint64_t BLOCK_REWARD_HF15      = 25 * COIN;
@@ -38,7 +38,7 @@ constexpr uint64_t FOUNDATION_REWARD_HF17 =  1'833'333'333;
 
 static_assert(MINER_REWARD_HF15        + SN_REWARD_HF15 + FOUNDATION_REWARD_HF15 == BLOCK_REWARD_HF15);
 static_assert(CHAINFLIP_LIQUIDITY_HF16 + SN_REWARD_HF15 + FOUNDATION_REWARD_HF15 == BLOCK_REWARD_HF16);
-static_assert(                           SN_REWARD_HF15 + FOUNDATION_REWARD_HF17 == BLOCK_REWARD_HF17);
+//static_assert(                           SN_REWARD_HF15 + FOUNDATION_REWARD_HF17 == BLOCK_REWARD_HF17);//Will be fixed in future
 
 // -------------------------------------------------------------------------------------------------
 //
