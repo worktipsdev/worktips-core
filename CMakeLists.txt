@@ -58,7 +58,7 @@ cmake_minimum_required(VERSION 3.10)
 message(STATUS "CMake version ${CMAKE_VERSION}")
 
 project(worktips
-    VERSION 4.0.0
+    VERSION 4.0.1
     LANGUAGES CXX C)
 set(WORKTIPS_RELEASE_CODENAME "Mark 4")
 
