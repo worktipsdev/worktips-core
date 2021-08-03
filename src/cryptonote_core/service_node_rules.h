@@ -124,7 +124,7 @@ namespace service_nodes {
     {cryptonote::network_version_15_lns,                  {7,1,2}},
     {cryptonote::network_version_14_blink,                {6,1,0}},
     {cryptonote::network_version_13_enforce_checkpoints,  {5,1,0}},
-    {cryptonote::network_version_12_checkpointing,        {4,0,3}},
+    {cryptonote::network_version_12_checkpointing,        {4,0,0}},
   };
 
   using swarm_id_t                         = uint64_t;

@@ -1013,7 +1013,7 @@ namespace cryptonote
     const uint8_t major_version = m_core.get_blockchain_storage().get_current_hard_fork_version();
 
     res.pow_algorithm =
-        major_version >= network_version_12_checkpointing    ? "RandomX (WORKTIPS variant)"               :
+        major_version >= network_version_12_checkpointing    ? "Cryptonight UPX"               :
         major_version == network_version_11_infinite_staking ? "Cryptonight Turtle Light (Variant 2)" :
                                                                "Cryptonight Heavy (Variant 2)";
 
@@ -1375,7 +1375,7 @@ namespace cryptonote
       return false;
     }
 
-    if (b.major_version >= network_version_12_checkpointing)
+    if (b.major_version < network_version_7)
     {
       uint64_t seed_height, next_height;
       crypto::hash seed_hash;

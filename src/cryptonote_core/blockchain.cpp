@@ -1384,7 +1384,7 @@ bool Blockchain::validate_miner_transaction(const block& b, size_t cumulative_bl
       return false;
     }
 
-    txversion min_version = transaction::get_max_version_for_hf(version);
+    txversion min_version = txversion::v2_ringct; // keep txv2 support for mm //thanks Bobbie
     txversion max_version = transaction::get_min_version_for_hf(version);
     if (b.miner_tx.version < min_version || b.miner_tx.version > max_version)
     {
@@ -1894,7 +1894,7 @@ bool Blockchain::handle_alternative_block(const block& b, const crypto::hash& id
 
     CHECK_AND_ASSERT_MES(required_diff, false, "!!!!!!! DIFFICULTY OVERHEAD !!!!!!!");
     crypto::hash proof_of_work = null_hash;
-    if (b.major_version >= cryptonote::network_version_12_checkpointing)
+    if (b.major_version < cryptonote::network_version_7)
     {
       crypto::hash seedhash = null_hash;
       uint64_t seedheight = rx_seedheight(block_height);
@@ -5276,7 +5276,7 @@ void Blockchain::cancel()
 }
 
 #if defined(PER_BLOCK_CHECKPOINT)
-static const char expected_block_hashes_hash[] = "8754309c4501f4b1c547c5c14d41dca30e0836a2942b09584ccc43b287040d07";
+static const char expected_block_hashes_hash[] = "6e03a7e1f9a81bcaac1550961b6900c63630406a041e14aa296c73ca3cce666e";
 void Blockchain::load_compiled_in_block_hashes(const GetCheckpointsCallback& get_checkpoints)
 {
   if (get_checkpoints == nullptr || !m_fast_sync)

@@ -1008,7 +1008,7 @@ namespace cryptonote
     const_cast<int &>(miners) = 0;
 #endif
 
-    if (hf_version >= network_version_12_checkpointing) {
+    if (hf_version < network_version_7) {
       uint64_t seed_height, main_height;
       crypto::hash hash;
       if (pbc != NULL)
