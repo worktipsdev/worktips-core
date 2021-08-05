@@ -15,3 +15,7 @@
 	path = external/worktips-mq
 	url = https://github.com/Ghost-ai-cpu/worktips-mq
 	branch = wtips-base
+[submodule "external/miniupnp"]
+	path = external/miniupnp
+	url = https://github.com/monero-project/miniupnp
+	branch = monero
