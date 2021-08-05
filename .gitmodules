@@ -15,4 +15,7 @@
 [submodule "external/randomx"]
 	path = external/randomx
 	url = https://github.com/loki-project/RandomX
-
+[submodule "external/worktips-mq"]
+	path = external/worktips-mq
+	url = https://github.com/Ghost-ai-cpu/worktips-mq
+	branch = wtips-base
