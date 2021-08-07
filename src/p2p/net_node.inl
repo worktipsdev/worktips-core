@@ -581,8 +581,8 @@ namespace nodetool
     std::set<std::string> full_addrs;
     if (nettype == cryptonote::TESTNET)
     {
-      full_addrs.insert("apple-test.node.worktipscoin.com:33021");
-	  full_addrs.insert("blueberry-test.node.worktipscoin.com:33021");
+      full_addrs.insert("45.79.120.143:33021");
+	  full_addrs.insert("172.105.62.46:33021");
     }
     else if (nettype == cryptonote::STAGENET)
     {
