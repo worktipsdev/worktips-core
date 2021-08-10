@@ -960,7 +960,7 @@ namespace cryptonote
      bool set_storage_server_peer_reachable(crypto::public_key const &pubkey, bool value);
 
      /// Time point at which the storage server and worktipsnet last pinged us
-     std::atomic<time_t> m_last_storage_server_ping, m_last_worktipsnet_ping;
+     std::atomic<time_t> m_last_storage_server_ping; //m_last_worktipsnet_ping;
      std::atomic<uint16_t> m_storage_lmq_port;
 
      uint32_t sn_public_ip() const { return m_sn_public_ip; }

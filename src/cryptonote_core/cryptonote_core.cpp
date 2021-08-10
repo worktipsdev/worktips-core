@@ -304,7 +304,7 @@ namespace cryptonote
               m_nettype(UNDEFINED),
               m_update_available(false),
               m_last_storage_server_ping(0),
-              m_last_worktipsnet_ping(0),
+              //m_last_worktipsnet_ping(0),
               m_pad_transactions(false)
   {
     m_checkpoints_updating.clear();
@@ -583,8 +583,8 @@ namespace cryptonote
         s += time_ago_str(now, last_proof);
         s += ", storage: ";
         s += time_ago_str(now, c.m_last_storage_server_ping);
-        s += ", worktipsnet: ";
-        s += time_ago_str(now, c.m_last_worktipsnet_ping);
+        //s += ", worktipsnet: ";
+        //s += time_ago_str(now, c.m_last_worktipsnet_ping);
       }
     }
     return s;
@@ -2093,7 +2093,7 @@ namespace cryptonote
           return;
         }
         uint8_t hf_version = get_blockchain_storage().get_current_hard_fork_version();
-        if (!check_external_ping(m_last_worktipsnet_ping, WORKTIPSNET_PING_LIFETIME, "Worktipsnet"))
+       /* if (!check_external_ping(m_last_worktipsnet_ping, WORKTIPSNET_PING_LIFETIME, "Worktipsnet"))
         {
           if (hf_version >= cryptonote::network_version_14_blink)
           {
@@ -2108,7 +2108,7 @@ namespace cryptonote
                 "Have not heard from worktipsnet recently. Make sure that it is running! "
                 "It is required to run alongside the Worktips daemon after hard fork 14");
           }
-        }
+        } */
 
         submit_uptime_proof();
       });

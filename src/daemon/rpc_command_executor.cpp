@@ -746,11 +746,11 @@ bool t_rpc_command_executor::show_status() {
         str << "NOT RECEIVED";
     str << " (storage), ";
 
-    if (ires.last_worktipsnet_ping > 0)
-        str << get_human_time_ago(ires.last_worktipsnet_ping, time(nullptr), true /*abbreviate*/);
-    else
-        str << "NOT RECEIVED";
-    str << " (worktipsnet)";
+    //if (ires.last_worktipsnet_ping > 0)
+        //str << get_human_time_ago(ires.last_worktipsnet_ping, time(nullptr), true /*abbreviate*/);
+    //else
+        //str << "NOT RECEIVED";
+    //str << " (worktipsnet)"; 
 
 
     tools::success_msg_writer() << str.str();
