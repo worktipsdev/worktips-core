@@ -581,8 +581,8 @@ namespace nodetool
     std::set<std::string> full_addrs;
     if (nettype == cryptonote::TESTNET)
     {
-      full_addrs.insert("45.79.120.143:33021");
-	  full_addrs.insert("172.105.62.46:33021");
+      full_addrs.insert("apple-test.node.worktipscoin.com:33021");
+	  full_addrs.insert("blueberry-test.node.worktipscoin.com:33021");
     }
     else if (nettype == cryptonote::STAGENET)
     {
@@ -595,8 +595,15 @@ namespace nodetool
     {
  	  full_addrs.insert("apple.node.worktipscoin.com:31021");
 	  full_addrs.insert("blueberry.node.worktipscoin.com:31021");
-	  full_addrs.insert("cherry.node.worktipscoin.com:31021");
-	  full_addrs.insert("date.node.worktipscoin.com:31021");
+	  full_addrs.insert("cherry.node.worktipscoin.com:31021");//placeholder
+	  full_addrs.insert("dates.node.worktipscoin.com:31021");//placeholder
+	  full_addrs.insert("elderberry.node.worktipscoin.com:31021");//placeholder
+	  full_addrs.insert("fig.node.worktipscoin.com:31021");//placeholder
+	  full_addrs.insert("hackberry.node.worktipscoin.com:31021");//placeholder
+	  full_addrs.insert("imbe.node.worktipscoin.com:31021");//placeholder
+	  full_addrs.insert("jackfruit.node.worktipscoin.com:31021");//placeholder
+	  full_addrs.insert("kiwi.node.worktipscoin.com:31021");//placeholder
+	  full_addrs.insert("lychee.node.worktipscoin.com:31021");//placeholder
 	  full_addrs.insert("144.202.10.128:31021");
 	  full_addrs.insert("107.172.242.234:31021");
     }
