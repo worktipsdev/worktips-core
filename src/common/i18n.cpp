@@ -37,6 +37,8 @@
 #include "common/i18n.h"
 #include "translation_files.h"
 
+#include <algorithm>
+
 #undef WORKTIPS_DEFAULT_LOG_CATEGORY
 #define WORKTIPS_DEFAULT_LOG_CATEGORY "i18n"
 
