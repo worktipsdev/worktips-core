@@ -68,7 +68,7 @@ enum
 
 void cn_fast_hash(const void *data, size_t length, char *hash);
 void cn_turtle_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations);
-void cn_upx_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations, uint64_t mask);
+void cn_upx_hash(const void *data, size_t length, char *hash, int upxtwo, int variant, int prehashed);
 void hash_extra_blake(const void *data, size_t length, char *hash);
 void hash_extra_groestl(const void *data, size_t length, char *hash);
 void hash_extra_jh(const void *data, size_t length, char *hash);

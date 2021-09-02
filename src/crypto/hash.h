@@ -115,7 +115,7 @@ namespace crypto {
              2, // light
              2, // variant
              0, // pre-hashed
-             CN_UPX_SCRATCHPAD, CN_UPX_ITERATIONS, CN_UPX_MASK);
+             );
       }
       break;
 
