@@ -94,9 +94,9 @@ extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *exp
 #define VARIANT2_SHUFFLE_ADD_SSE2(base_ptr, offset) \
   do if (variant == 2) \
   { \
-    const __m128i chunk1 = _mm_load_si128((__m128i *)((base_ptr) + ((offset) ^ (lightFlag == 16 ? 0x30 : 0x10)))); \
+    const __m128i chunk1 = _mm_load_si128((__m128i *)((base_ptr) + ((offset) ^ (light == 2 ? 0x30 : 0x10)))); \
     const __m128i chunk2 = _mm_load_si128((__m128i *)((base_ptr) + ((offset) ^ 0x20))); \
-    const __m128i chunk3 = _mm_load_si128((__m128i *)((base_ptr) + ((offset) ^ (lightFlag == 16 ? 0x10 : 0x30)))); \
+    const __m128i chunk3 = _mm_load_si128((__m128i *)((base_ptr) + ((offset) ^ (light == 2 ? 0x10 : 0x30)))); \
     _mm_store_si128((__m128i *)((base_ptr) + ((offset) ^ 0x10)), _mm_add_epi64(chunk3, _b1)); \
     _mm_store_si128((__m128i *)((base_ptr) + ((offset) ^ 0x20)), _mm_add_epi64(chunk1, _b)); \
     _mm_store_si128((__m128i *)((base_ptr) + ((offset) ^ 0x30)), _mm_add_epi64(chunk2, _a)); \
@@ -105,9 +105,9 @@ extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *exp
 #define VARIANT2_SHUFFLE_ADD_NEON(base_ptr, offset) \
   do if (variant == 2) \
   { \
-    const uint64x2_t chunk1 = vld1q_u64(U64((base_ptr) + ((offset) ^ (lightFlag == 16 ? 0x30 : 0x10)))); \
+    const uint64x2_t chunk1 = vld1q_u64(U64((base_ptr) + ((offset) ^ (light == 2 ? 0x30 : 0x10)))); \
     const uint64x2_t chunk2 = vld1q_u64(U64((base_ptr) + ((offset) ^ 0x20))); \
-    const uint64x2_t chunk3 = vld1q_u64(U64((base_ptr) + ((offset) ^ (lightFlag == 16 ? 0x10 : 0x30)))) \
+    const uint64x2_t chunk3 = vld1q_u64(U64((base_ptr) + ((offset) ^ (light == 2 ? 0x10 : 0x30)))) \
     vst1q_u64(U64((base_ptr) + ((offset) ^ 0x10)), vaddq_u64(chunk3, vreinterpretq_u64_u8(_b1))); \
     vst1q_u64(U64((base_ptr) + ((offset) ^ 0x20)), vaddq_u64(chunk1, vreinterpretq_u64_u8(_b))); \
     vst1q_u64(U64((base_ptr) + ((offset) ^ 0x30)), vaddq_u64(chunk2, vreinterpretq_u64_u8(_a))); \
@@ -116,9 +116,9 @@ extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *exp
 #define VARIANT2_PORTABLE_SHUFFLE_ADD(base_ptr, offset) \
   do if (variant == 2) \
   { \
-    uint64_t *chunk1 = U64((base_ptr) + ((offset) ^ (lightFlag == 16 ? 0x30 : 0x10))); \
+    uint64_t *chunk1 = U64((base_ptr) + ((offset) ^ (light == 2 ? 0x30 : 0x10))); \
     uint64_t* chunk2 = U64((base_ptr) + ((offset) ^ 0x20)); \
-    uint64_t *chunk3 = U64((base_ptr) + ((offset) ^ (lightFlag == 16 ? 0x10 : 0x30))); \
+    uint64_t *chunk3 = U64((base_ptr) + ((offset) ^ (light == 2 ? 0x10 : 0x30))); \
     \
     const uint64_t chunk1_old[2] = { chunk1[0], chunk1[1] }; \
     \
@@ -244,7 +244,7 @@ extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *exp
 #endif
 
 #define pre_aes() \
-  j = state_index(a,lightFlag); \
+  j = a[0] & mask; \
   _c = _mm_load_si128(R128(&hp_state[j])); \
   _a = _mm_load_si128(R128(a)); \
 
@@ -262,7 +262,7 @@ extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *exp
   _mm_store_si128(R128(c), _c); \
   _mm_store_si128(R128(&hp_state[j]), _mm_xor_si128(_b, _c)); \
   VARIANT1_1(&hp_state[j]); \
-  j = state_index(c,lightFlag); \
+  j = c[0] & mask; \
   p = U64(&hp_state[j]); \
   b[0] = p[0]; b[1] = p[1]; \
   VARIANT2_INTEGER_MATH_SSE2(b, c); \
@@ -607,16 +607,11 @@ void upx_slow_hash_free_state(uint32_t page_size)
  * @param length the length in bytes of the data
  * @param hash a pointer to a buffer in which the final 256 bit hash will be stored
  */
-void cn_upx_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations)
+void cn_upx_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations, uint64_t mask)
 {
   uint32_t TOTALBLOCKS = (CN_UPX_PAGE_SIZE / AES_BLOCK_SIZE);
   uint32_t init_rounds = (scratchpad / INIT_SIZE_BYTE);
   uint32_t aes_rounds = (iterations / 2);
-  size_t lightFlag = light == 0
-        ? 1
-        : light == 1
-            ? 2
-            : 16;
 
   RDATA_ALIGN16 uint8_t expandedKey[240];  /* These buffers are aligned to use later with SSE functions */
 
@@ -806,7 +801,7 @@ union cn_upx_hash_state
   __asm__("umulh %0, %1, %2\n\t" : "=r"(hi) : "r"(c[0]), "r"(b[0]) );
 
 #define pre_aes() \
-  j = state_index(a,lightFlag); \
+  j = a & mask; \
   _c = vld1q_u8(&hp_state[j]); \
   _a = vld1q_u8((const uint8_t *)a); \
 
@@ -815,7 +810,7 @@ union cn_upx_hash_state
   vst1q_u8((uint8_t *)c, _c); \
   vst1q_u8(&hp_state[j], veorq_u8(_b, _c)); \
   VARIANT1_1(&hp_state[j]); \
-  j = state_index(c,lightFlag); \
+  j = c & mask; \
   p = U64(&hp_state[j]); \
   b[0] = p[0]; b[1] = p[1]; \
   VARIANT2_PORTABLE_INTEGER_MATH(b, c); \
@@ -981,17 +976,12 @@ STATIC INLINE void aligned_free(void *ptr)
 }
 #endif /* FORCE_USE_HEAP */
 
-void cn_upx_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations)
+void cn_upx_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations, uint64_t mask)
 {
   uint32_t TOTALBLOCKS = (CN_UPX_PAGE_SIZE / AES_BLOCK_SIZE);
   uint32_t init_rounds = (scratchpad / INIT_SIZE_BYTE);
   uint32_t aes_rounds = (iterations / 2);
-  size_t lightFlag = light == 0
-        ? 1
-        : light == 1
-            ? 2
-            : 16;
-
+  
   RDATA_ALIGN16 uint8_t expandedKey[240];
 
 #ifndef FORCE_USE_HEAP
@@ -1206,15 +1196,10 @@ STATIC INLINE void xor_blocks(uint8_t* a, const uint8_t* b)
   U64(a)[1] ^= U64(b)[1];
 }
 
-void cn_upx_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations)
+void cn_upx_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations, uint64_t mask)
 {
   uint32_t init_rounds = (scratchpad / INIT_SIZE_BYTE);
   uint32_t aes_rounds = (iterations / 2);
-      size_t lightFlag = light == 0
-        ? 1
-        : light == 1
-            ? 2
-            : 16;
 
   uint8_t text[INIT_SIZE_BYTE];
   uint8_t a[AES_BLOCK_SIZE];
@@ -1271,11 +1256,9 @@ void cn_upx_hash(const void *data, size_t length, char *hash, int light, int var
 
   for(i = 0; i < aes_rounds; i++)
   {
-    #define MASK(div) ((uint32_t)(((CN_UPX_PAGE_SIZE / AES_BLOCK_SIZE) / (div) - 1) << 4))
-    #define state_index(x,div) ((*(uint32_t *) x) & MASK(div))
 
     // Iteration 1
-    j = state_index(a,lightFlag);
+    j = a & mask;
     p = &long_state[j];
     aesb_single_round(p, p, a);
     copy_block(c1, p);
@@ -1285,7 +1268,7 @@ void cn_upx_hash(const void *data, size_t length, char *hash, int light, int var
     VARIANT1_1(p);
 
     // Iteration 2
-    j = state_index(c1,lightFlag);
+    j = c1 & mask;
     p = &long_state[j];
     copy_block(c, p);
 
@@ -1348,6 +1331,8 @@ static void (*const extra_hashes[4])(const void *, size_t, char *) = {
 
 extern int aesb_single_round(const uint8_t *in, uint8_t*out, const uint8_t *expandedKey);
 extern int aesb_pseudo_round(const uint8_t *in, uint8_t *out, const uint8_t *expandedKey);
+
+static size_t e2i(const uint8_t* a, size_t count) { return (*((uint64_t*)a) / AES_BLOCK_SIZE) & (count - 1); }
 
 static void mul(const uint8_t* a, const uint8_t* b, uint8_t* res) {
   uint64_t a0, b0;
@@ -1414,16 +1399,11 @@ union cn_upx_hash_state {
 };
 #pragma pack(pop)
 
-void cn_upx_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations)
+void cn_upx_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed, uint32_t scratchpad, uint32_t iterations, uint64_t mask)
 {
   uint32_t init_rounds = (scratchpad / INIT_SIZE_BYTE);
   uint32_t aes_rounds = (iterations / 2);
   size_t TOTALBLOCKS = (CN_UPX_PAGE_SIZE / AES_BLOCK_SIZE);
-      size_t lightFlag = light == 0
-        ? 1
-        : light == 1
-            ? 2
-            : 16;
 
 #ifndef FORCE_USE_HEAP
   uint8_t long_state[CN_UPX_PAGE_SIZE];
@@ -1474,18 +1454,19 @@ void cn_upx_hash(const void *data, size_t length, char *hash, int light, int var
      * next address  <-+
      */
     /* Iteration 1 */
-    #define state_index(x,div) (((*((uint64_t *)x) >> 4) & (TOTALBLOCKS /(div) - 1)) << 4)
-    j = state_index(a, lightFlag);
+
+    j = e2i(a, TOTALBLOCKS) * AES_BLOCK_SIZE;
     copy_block(c1, &long_state[j]);
     aesb_single_round(c1, c1, a);
 
     VARIANT2_PORTABLE_SHUFFLE_ADD(long_state, j);
     copy_block(&long_state[j], c1);
     xor_blocks(&long_state[j], b);
+	assert(j == e2i(a, TOTALBLOCKS) * AES_BLOCK_SIZE);
     VARIANT1_1(&long_state[j]);
 
     /* Iteration 2 */
-    j = state_index(c1, lightFlag);
+    j = e2i(c1, TOTALBLOCKS) * AES_BLOCK_SIZE;
     copy_block(c2, &long_state[j]);
     VARIANT2_PORTABLE_INTEGER_MATH(c2, c1);
     mul(c1, c2, d);
@@ -1497,6 +1478,7 @@ void cn_upx_hash(const void *data, size_t length, char *hash, int light, int var
     xor_blocks(c1, c2);
     VARIANT1_2(c2 + 8);
     copy_block(&long_state[j], c2);
+	assert(j == e2i(a, TOTALBLOCKS) * AES_BLOCK_SIZE);
 
     if (variant == 2) {
       copy_block(b + AES_BLOCK_SIZE, b);

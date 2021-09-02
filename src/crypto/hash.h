@@ -109,15 +109,13 @@ namespace crypto {
       case cn_slow_hash_type::cn_upx:
       default:
       {
-         const uint32_t CN_UPX_SCRATCHPAD = 131072;
-         const uint32_t CN_UPX_ITERATIONS = 32768;
          cn_upx_hash(data,
              length,
              hash.data,
              2, // light
              2, // variant
              0, // pre-hashed
-             CN_UPX_SCRATCHPAD, CN_UPX_ITERATIONS);
+             CN_UPX_SCRATCHPAD, CN_UPX_ITERATIONS, CN_UPX_MASK);
       }
       break;
 
