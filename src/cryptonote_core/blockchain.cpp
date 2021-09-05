@@ -3904,10 +3904,10 @@ bool Blockchain::handle_block_to_main_chain(const block& bl, const crypto::hash&
   // Hence this hack: starting at that block until the next hard fork, we allow a slight grace
   // (0.2%) on the required difficulty (but we don't *change* the actual difficulty value used for
   // diff calculation).
-  if (blockchain_height >= 526483 && m_hardfork->get_current_version() < network_version_16)
-  {
-    required_diff = (required_diff * 998) / 1000;
-  }
+  //if (blockchain_height >= 526483 && m_hardfork->get_current_version() < network_version_16)
+  //{
+    //required_diff = (required_diff * 998) / 1000;
+  //}
 
   CHECK_AND_ASSERT_MES(required_diff, false, "!!!!!!!!! difficulty overhead !!!!!!!!!");
 
