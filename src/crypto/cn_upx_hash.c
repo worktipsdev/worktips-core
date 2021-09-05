@@ -589,7 +589,7 @@ BOOL SetLockPagesPrivilege(HANDLE hProcess, BOOL bEnable)
  * the allocated buffer.
  */
 
-void slow_hash_allocate_state(void)
+void cn_upx_hash_allocate_state(void)
 {
     if(hp_state != NULL)
         return;
@@ -619,10 +619,10 @@ void slow_hash_allocate_state(void)
 }
 
 /**
- *@brief frees the state allocated by slow_hash_allocate_state
+ *@brief frees the state allocated by cn_upx_hash_allocate_state
  */
 
-void slow_hash_free_state(void)
+void cn_upx_hash_free_state(void)
 {
     if(hp_state == NULL)
         return;
@@ -696,7 +696,7 @@ void cn_upx_hash(const void *data, size_t length, char *hash, int upxtwo, int va
 
     // this isn't supposed to happen, but guard against it for now.
     if(hp_state == NULL)
-        slow_hash_allocate_state();
+        cn_upx_hash_allocate_state();
 
     /* CryptoNight Step 1:  Use Keccak1600 to initialize the 'state' (and 'text') buffers from the data. */
     if (prehashed) {
@@ -809,13 +809,13 @@ void cn_upx_hash(const void *data, size_t length, char *hash, int upxtwo, int va
 }
 
 #elif !defined NO_AES && (defined(__arm__) || defined(__aarch64__))
-void slow_hash_allocate_state(void)
+void cn_upx_hash_allocate_state(void)
 {
   // Do nothing, this is just to maintain compatibility with the upgraded slow-hash.c
   return;
 }
 
-void slow_hash_free_state(void)
+void cn_upx_hash_free_state(void)
 {
   // As above
   return;
@@ -1372,13 +1372,13 @@ void cn_upx_hash(const void *data, size_t length, char *hash, int upxtwo, int va
 #else
 // Portable implementation as a fallback
 
-void slow_hash_allocate_state(void)
+void cn_upx_hash_allocate_state(void)
 {
   // Do nothing, this is just to maintain compatibility with the upgraded slow-hash.c
   return;
 }
 
-void slow_hash_free_state(void)
+void cn_upx_hash_free_state(void)
 {
   // As above
   return;

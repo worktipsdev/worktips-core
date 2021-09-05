@@ -114,7 +114,7 @@ namespace crypto {
              hash.data,
              2, // light
              2, // variant
-             0, // pre-hashed
+             0 // pre-hashed
              );
       }
       break;
