@@ -1,3 +1,4 @@
+# Copyright (c) 2018, The Worktips Project
 # Copyright (c) 2018, The Loki Project
 # Copyright (c) 2014-2019, The Monero Project
 #
@@ -56,17 +57,17 @@ endif()
 cmake_minimum_required(VERSION 3.10)
 message(STATUS "CMake version ${CMAKE_VERSION}")
 
-project(loki
-    VERSION 7.1.9
+project(worktips
+    VERSION 4.0.0
     LANGUAGES CXX C)
-set(LOKI_RELEASE_CODENAME "Valiant Vidar")
+set(WORKTIPS_RELEASE_CODENAME "Mark 4")
 
 # String value to append to the full version string; this is intended to easily identify whether a
 # binary was build from the release or development branches.  This should be permanently set to an
 # empty string on `master`, "-dev" on the `dev` branch, and can be set externally (via cmake
 # arguments) where it makes sense to take some other branch release with an extra value.
-if(NOT DEFINED LOKI_RELEASE_SUFFIX)
-  set(LOKI_RELEASE_SUFFIX "-dev")
+if(NOT DEFINED WORKTIPS_RELEASE_SUFFIX)
+  set(WORKTIPS_RELEASE_SUFFIX "-dev")
 endif()
 
 if(POLICY CMP0079)
@@ -284,7 +285,7 @@ if(NOT MANUAL_SUBMODULES)
     check_submodule(external/rapidjson)
     check_submodule(external/trezor-common)
     check_submodule(external/randomx)
-    check_submodule(external/loki-mq mapbox-variant cppzmq)
+    check_submodule(external/worktips-mq mapbox-variant cppzmq)
     if(BUILD_TESTS)
       check_submodule(external/googletest)
     endif()
@@ -473,7 +474,7 @@ if(NOT TARGET sodium)
     target_link_libraries(sodium INTERFACE sodium_vendor)
   endif()
 
-  # Need this target export so that loki-mq properly picks up sodium
+  # Need this target export so that worktips-mq properly picks up sodium
   export(TARGETS sodium NAMESPACE sodium:: FILE sodium-exports.cmake)
 endif()
 
@@ -893,7 +894,7 @@ if (WIN32)
 endif()
 
 if (BUILD_INTEGRATION)
-  target_compile_definitions(extra INTERFACE LOKI_ENABLE_INTEGRATION_TEST_HOOKS)
+  target_compile_definitions(extra INTERFACE WORKTIPS_ENABLE_INTEGRATION_TEST_HOOKS)
 else()
   option(USE_READLINE "Build with GNU readline support." ON)
   if(USE_READLINE AND BUILD_STATIC_DEPS)
@@ -930,8 +931,8 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang" AND ARCH_WIDTH EQUAL "32" AND NOT IOS AN
   endif()
 endif()
 
-option(LOKI_DEBUG_SHORT_PROOFS "Developer option to substantially reduce uptime proof intervals for local test network debugging (the result lokid will not be usable on the live networks)" OFF)
-if (LOKI_DEBUG_SHORT_PROOFS)
+option(WORKTIPS_DEBUG_SHORT_PROOFS "Developer option to substantially reduce uptime proof intervals for local test network debugging (the result worktipsd will not be usable on the live networks)" OFF)
+if (WORKTIPS_DEBUG_SHORT_PROOFS)
   add_definitions(-DUPTIME_PROOF_BASE_MINUTE=3) # 20x faster uptime proofs
 endif()
 
