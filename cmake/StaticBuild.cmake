@@ -5,32 +5,32 @@
 
 set(LOCAL_MIRROR "" CACHE STRING "local mirror path/URL for lib downloads")
 
-set(OPENSSL_VERSION 1.1.1g CACHE STRING "openssl version")
+set(OPENSSL_VERSION 1.1.1k CACHE STRING "openssl version")
 set(OPENSSL_MIRROR ${LOCAL_MIRROR} https://www.openssl.org/source CACHE STRING "openssl download mirror(s)")
 set(OPENSSL_SOURCE openssl-${OPENSSL_VERSION}.tar.gz)
-set(OPENSSL_HASH SHA256=ddb04774f1e32f0c49751e21b67216ac87852ceb056b75209af2443400636d46
+set(OPENSSL_HASH SHA256=892a0875b9872acd04a9fde79b1f943075d5ea162415de3047c327df33fbaee5
     CACHE STRING "openssl source hash")
 
-set(EXPAT_VERSION 2.2.9 CACHE STRING "expat version")
+set(EXPAT_VERSION 2.3.0 CACHE STRING "expat version")
 string(REPLACE "." "_" EXPAT_TAG "R_${EXPAT_VERSION}")
 set(EXPAT_MIRROR ${LOCAL_MIRROR} https://github.com/libexpat/libexpat/releases/download/${EXPAT_TAG}
     CACHE STRING "expat download mirror(s)")
 set(EXPAT_SOURCE expat-${EXPAT_VERSION}.tar.xz)
-set(EXPAT_HASH SHA512=e082874efcc4b00709e2c0192c88fb15dfc4f33fc3a2b09e619b010ea93baaf7e7572683f738463db0ce2350cab3de48a0c38af6b74d1c4f5a9e311f499edab0
+set(EXPAT_HASH SHA512=dde8a9a094b18d795a0e86ca4aa68488b352dc67019e0d669e8b910ed149628de4c2a49bc3a5b832f624319336a01f9e4debe03433a43e1c420f36356d886820
     CACHE STRING "expat source hash")
 
-set(UNBOUND_VERSION 1.10.1 CACHE STRING "unbound version")
+set(UNBOUND_VERSION 1.13.1 CACHE STRING "unbound version")
 set(UNBOUND_MIRROR ${LOCAL_MIRROR} https://nlnetlabs.nl/downloads/unbound CACHE STRING "unbound download mirror(s)")
 set(UNBOUND_SOURCE unbound-${UNBOUND_VERSION}.tar.gz)
-set(UNBOUND_HASH SHA256=b73677c21a71cf92f15cc8cfe76a3d875e40f65b6150081c39620b286582d536
+set(UNBOUND_HASH SHA256=8504d97b8fc5bd897345c95d116e0ee0ddf8c8ff99590ab2b4bd13278c9f50b8
     CACHE STRING "unbound source hash")
 
-set(BOOST_VERSION 1.73.0 CACHE STRING "boost version")
-set(BOOST_MIRROR ${LOCAL_MIRROR} https://dl.bintray.com/boostorg/release/${BOOST_VERSION}/source
+set(BOOST_VERSION 1.75.0 CACHE STRING "boost version")
+set(BOOST_MIRROR ${LOCAL_MIRROR} https://boostorg.jfrog.io/artifactory/main/release/${BOOST_VERSION}/source
     CACHE STRING "boost download mirror(s)")
 string(REPLACE "." "_" BOOST_VERSION_ ${BOOST_VERSION})
 set(BOOST_SOURCE boost_${BOOST_VERSION_}.tar.bz2)
-set(BOOST_HASH SHA256=4eb3b8d442b426dc35346235c8733b5ae35ba431690e38c6a8263dce9fcbb402
+set(BOOST_HASH SHA256=953db31e016db7bb207f11432bef7df100516eeb746843fa0486a222e3fd49cb
     CACHE STRING "boost source hash")
 
 set(NCURSES_VERSION 6.2 CACHE STRING "ncurses version")
@@ -40,32 +40,32 @@ set(NCURSES_SOURCE ncurses-${NCURSES_VERSION}.tar.gz)
 set(NCURSES_HASH SHA512=4c1333dcc30e858e8a9525d4b9aefb60000cfc727bc4a1062bace06ffc4639ad9f6e54f6bdda0e3a0e5ea14de995f96b52b3327d9ec633608792c99a1e8d840d
     CACHE STRING "ncurses source hash")
 
-set(READLINE_VERSION 8.0 CACHE STRING "readline version")
+set(READLINE_VERSION 8.1 CACHE STRING "readline version")
 set(READLINE_MIRROR ${LOCAL_MIRROR} http://ftpmirror.gnu.org/gnu/readline
     CACHE STRING "readline download mirror(s)")
 set(READLINE_SOURCE readline-${READLINE_VERSION}.tar.gz)
-set(READLINE_HASH SHA512=41759d27bc3a258fefd7f4ff3277fa6ab9c21abb7b160e1a75aa8eba547bd90b288514e76264bd94fb0172da8a4faa54aab2c07b68a0356918ecf7f1969e866f
+set(READLINE_HASH SHA512=27790d0461da3093a7fee6e89a51dcab5dc61928ec42e9228ab36493b17220641d5e481ea3d8fee5ee0044c70bf960f55c7d3f1a704cf6b9c42e5c269b797e00
     CACHE STRING "readline source hash")
 
-set(SQLITE3_VERSION 3320200 CACHE STRING "sqlite3 version")
-set(SQLITE3_MIRROR ${LOCAL_MIRROR} https://www.sqlite.org/2020
+set(SQLITE3_VERSION 3350500 CACHE STRING "sqlite3 version")
+set(SQLITE3_MIRROR ${LOCAL_MIRROR} https://www.sqlite.org/2021
     CACHE STRING "sqlite3 download mirror(s)")
 set(SQLITE3_SOURCE sqlite-autoconf-${SQLITE3_VERSION}.tar.gz)
-set(SQLITE3_HASH SHA512=5b551a1366ce4fd5dfaa687e5021194d34315935b26dd7d71f8abc9935d03c3caea323263a8330fb42038c487cd399e95de68e451cc26d573f852f219c00a02f
+set(SQLITE3_HASH SHA512=039af796f79fc4517be0bd5ba37886264d49da309e234ae6fccdb488ef0109ed2b917fc3e6c1fc7224dff4f736824c653aaf8f0a37550c5ebc14d035cb8ac737
     CACHE STRING "sqlite3 source hash")
 
-set(EUDEV_VERSION 3.2.9 CACHE STRING "eudev version")
+set(EUDEV_VERSION 3.2.10 CACHE STRING "eudev version")
 set(EUDEV_MIRROR ${LOCAL_MIRROR} https://github.com/gentoo/eudev/archive/
     CACHE STRING "eudev download mirror(s)")
 set(EUDEV_SOURCE v${EUDEV_VERSION}.tar.gz)
-set(EUDEV_HASH SHA512=33ee9849875fc381fc1bd9eef9119b96ed4014719ccf96f88c957e2c53ae6c46152bc0623e5efc99579a4063ab25251ed63ffe69441bca3b0074398cffda7747
+set(EUDEV_HASH SHA512=37fc5e7f960a843fa68269697882123af4515555788a9e856474f51dd8c330a4c8e52e7c897aeb5d3eb36c6ad66cc99f5a38a284a75620b7e6c275c703e25d42
     CACHE STRING "eudev source hash")
 
-set(LIBUSB_VERSION 1.0.23 CACHE STRING "libusb version")
+set(LIBUSB_VERSION 1.0.24 CACHE STRING "libusb version")
 set(LIBUSB_MIRROR ${LOCAL_MIRROR} https://github.com/libusb/libusb/releases/download/v${LIBUSB_VERSION}
     CACHE STRING "libusb download mirror(s)")
 set(LIBUSB_SOURCE libusb-${LIBUSB_VERSION}.tar.bz2)
-set(LIBUSB_HASH SHA256=db11c06e958a82dac52cf3c65cb4dd2c3f339c8a988665110e0d24d19312ad8d
+set(LIBUSB_HASH SHA512=5aea36a530aaa15c6dd656d0ed3ce204522c9946d8d39ffbb290dab4a98cda388a2598da4995123d1032324056090bd429e702459626d3e8d7daeebc4e7ff3dc
     CACHE STRING "libusb source hash")
 
 set(HIDAPI_VERSION 0.9.0 CACHE STRING "hidapi version")
@@ -91,11 +91,11 @@ set(SODIUM_SOURCE libsodium-${SODIUM_VERSION}.tar.gz)
 set(SODIUM_HASH SHA512=17e8638e46d8f6f7d024fe5559eccf2b8baf23e143fadd472a7d29d228b186d86686a5e6920385fe2020729119a5f12f989c3a782afbd05a8db4819bb18666ef
   CACHE STRING "libsodium source hash")
 
-set(ZMQ_VERSION 4.3.2 CACHE STRING "libzmq version")
+set(ZMQ_VERSION 4.3.4 CACHE STRING "libzmq version")
 set(ZMQ_MIRROR ${LOCAL_MIRROR} https://github.com/zeromq/libzmq/releases/download/v${ZMQ_VERSION}
     CACHE STRING "libzmq mirror(s)")
 set(ZMQ_SOURCE zeromq-${ZMQ_VERSION}.tar.gz)
-set(ZMQ_HASH SHA512=b6251641e884181db9e6b0b705cced7ea4038d404bdae812ff47bdd0eed12510b6af6846b85cb96898e253ccbac71eca7fe588673300ddb9c3109c973250c8e4
+set(ZMQ_HASH SHA512=e198ef9f82d392754caadd547537666d4fba0afd7d027749b3adae450516bcf284d241d4616cad3cb4ad9af8c10373d456de92dc6d115b037941659f141e7c0e
     CACHE STRING "libzmq source hash")
 
 
@@ -315,7 +315,7 @@ set(Boost_VERSION ${BOOST_VERSION})
 
 
 build_external(sqlite3)
-add_static_target(sqlite3 sqlite_external libsqlite3.a)
+add_static_target(sqlite3 sqlite3_external libsqlite3.a)
 
 
 
@@ -340,7 +340,7 @@ if (NOT WIN32)
   add_static_target(ncurses_tinfo ncurses_external libtinfow.a)
 
 
-
+ if(FALSE) # not working reliably
   build_external(readline
     DEPENDS ncurses_external
     CONFIGURE_COMMAND ./configure ${cross_host} --prefix=${DEPS_DESTDIR} --disable-shared --with-curses
@@ -354,6 +354,7 @@ if (NOT WIN32)
   set_target_properties(readline PROPERTIES
     INTERFACE_LINK_LIBRARIES ncurses_tinfo
     INTERFACE_COMPILE_DEFINITIONS HAVE_READLINE)
+	endif()
 endif()
 
 
@@ -399,8 +400,8 @@ build_external(hidapi
   DEPENDS ${maybe_eudev} libusb_external
   CONFIGURE_COMMAND autoreconf -ivf && ./configure ${cross_host} --prefix=${DEPS_DESTDIR} --disable-shared --enable-static --with-pic
     "CC=${deps_cc}" "CXX=${deps_cxx}" "CFLAGS=-O2 ${flto}" "CXXFLAGS=-O2 ${flto}"
-    "libudev_CFLAGS=-I${DEPS_DESTDIR}/include" "libudev_LIBS="
-    "libusb_CFLAGS=-I${DEPS_DESTDIR}/include/libusb-1.0" "libusb_LIBS="
+    "libudev_CFLAGS=-I${DEPS_DESTDIR}/include" "libudev_LIBS=-L${DEPS_DESTDIR}/lib -ludev"
+    "libusb_CFLAGS=-I${DEPS_DESTDIR}/include/libusb-1.0" "libusb_LIBS=-L${DEPS_DESTDIR}/lib -lusb-1.0"
   BUILD_BYPRODUCTS
     ${hidapi_lib_byproducts}
     ${DEPS_DESTDIR}/include/hidapi
@@ -408,36 +409,40 @@ build_external(hidapi
 )
 set(HIDAPI_FOUND TRUE)
 add_static_target(hidapi_libusb hidapi_external ${hidapi_libusb_lib})
+set(hidapi_links "libusb_vendor;libudev")
+if(WIN32)
+  list(APPEND hidapi_links setupapi)
+endif()
 set_target_properties(hidapi_libusb PROPERTIES
-    INTERFACE_LINK_LIBRARIES "libusb_vendor;libudev"
+    INTERFACE_LINK_LIBRARIES "${hidapi_links}"
     INTERFACE_COMPILE_DEFINITIONS HAVE_HIDAPI)
 
 
 
-build_external(protobuf
-  CONFIGURE_COMMAND
-    ./configure ${cross_host} --disable-shared --prefix=${DEPS_DESTDIR} --with-pic
-      "CC=${deps_cc}" "CXX=${deps_cxx}" "CFLAGS=-O2 ${flto}" "CXXFLAGS=-O2 ${flto}"
-      "CPP=${deps_cc} -E" "CXXCPP=${deps_cxx} -E"
-      "CC_FOR_BUILD=${deps_cc}" "CXX_FOR_BUILD=${deps_cxx}"  # Thanks Google for making people hunt for undocumented magic variables
-  BUILD_BYPRODUCTS
-    ${DEPS_DESTDIR}/lib/libprotobuf-lite.a
-    ${DEPS_DESTDIR}/lib/libprotobuf.a
-    ${DEPS_DESTDIR}/lib/libprotoc.a
-    ${DEPS_DESTDIR}/include/google/protobuf
-)
-add_static_target(protobuf_lite protobuf_external libprotobuf-lite.a)
-add_static_target(protobuf_bloated protobuf_external libprotobuf.a)
-
+if(USE_DEVICE_TREZOR)
+  build_external(protobuf
+    CONFIGURE_COMMAND
+      ./configure ${cross_host} --disable-shared --prefix=${DEPS_DESTDIR} --with-pic
+        "CC=${deps_cc}" "CXX=${deps_cxx}" "CFLAGS=${deps_CFLAGS}" "CXXFLAGS=${deps_CXXFLAGS}"
+        "CPP=${deps_cc} -E" "CXXCPP=${deps_cxx} -E"
+        "CC_FOR_BUILD=${deps_cc}" "CXX_FOR_BUILD=${deps_cxx}"  # Thanks Google for making people hunt for undocumented magic variables
+    BUILD_BYPRODUCTS
+      ${DEPS_DESTDIR}/lib/libprotobuf-lite.a
+      ${DEPS_DESTDIR}/lib/libprotobuf.a
+      ${DEPS_DESTDIR}/lib/libprotoc.a
+      ${DEPS_DESTDIR}/include/google/protobuf
+  )
+  add_static_target(protobuf_lite protobuf_external libprotobuf-lite.a)
+  add_static_target(protobuf_bloated protobuf_external libprotobuf.a)
+ endif()
 
 
 build_external(sodium)
 add_static_target(sodium sodium_external libsodium.a)
 
 
-if(ZMQ_VERSION VERSION_LESS 4.3.3 AND CMAKE_CROSSCOMPILING AND ARCH_TRIPLET MATCHES mingw)
-  set(zmq_patch PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/utils/build_scripts/libzmq-pr3601-mingw-build-fix.patch
-    COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/utils/build_scripts/libzmq-pr3613-fix-funcptr-call.patch)
+if(CMAKE_CROSSCOMPILING AND ARCH_TRIPLET MATCHES mingw)
+  set(zmq_patch PATCH_COMMAND patch -p1 -i ${PROJECT_SOURCE_DIR}/utils/build_scripts/libzmq-mingw-closesocket.patch)
 endif()
 build_external(zmq
   DEPENDS sodium_external
@@ -455,4 +460,6 @@ if(CMAKE_CROSSCOMPILING AND ARCH_TRIPLET MATCHES mingw)
   list(APPEND libzmq_link_libs iphlpapi)
 endif()
 
-set_target_properties(libzmq PROPERTIES INTERFACE_LINK_LIBRARIES "${libzmq_link_libs}")
+set_target_properties(libzmq PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${libzmq_link_libs}"
+    INTERFACE_COMPILE_DEFINITIONS "ZMQ_STATIC")
