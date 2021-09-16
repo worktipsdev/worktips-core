@@ -1887,10 +1887,10 @@ bool Blockchain::handle_alternative_block(const block& b, const crypto::hash& id
     difficulty_type current_diff = get_next_difficulty_for_alternative_chain(alt_chain, block_height);
     difficulty_type required_diff = current_diff;
     // Difficulty hack; see comment in main chain version
-    if (block_height >= 526483 && m_hardfork->get_current_version() < network_version_16)
-    {
-      required_diff = (required_diff * 998) / 1000;
-    }
+    //if (block_height >= 526483 && m_hardfork->get_current_version() < network_version_16)
+   // {
+  //    required_diff = (required_diff * 998) / 1000;
+  //  }
 
     CHECK_AND_ASSERT_MES(required_diff, false, "!!!!!!! DIFFICULTY OVERHEAD !!!!!!!");
     crypto::hash proof_of_work = null_hash;
@@ -5279,7 +5279,7 @@ void Blockchain::cancel()
 static const char expected_block_hashes_hash[] = "af64293dce14db23840ee94475efa1fbbe0db61018cd40fb45bd2648c1a550c7";
 void Blockchain::load_compiled_in_block_hashes(const GetCheckpointsCallback& get_checkpoints)
 {
-  if (get_checkpoints == nullptr || !m_fast_sync)
+  if (get_checkpoints == nullptr || !m_fast_sync || true) // lets add a true here to disable the check
   {
     return;
   }
