@@ -5279,7 +5279,7 @@ void Blockchain::cancel()
 static const char expected_block_hashes_hash[] = "af64293dce14db23840ee94475efa1fbbe0db61018cd40fb45bd2648c1a550c7";
 void Blockchain::load_compiled_in_block_hashes(const GetCheckpointsCallback& get_checkpoints)
 {
-  if (get_checkpoints == nullptr || !m_fast_sync || true) // lets add a true here to disable the check
+  if (get_checkpoints == nullptr || !m_fast_sync)
   {
     return;
   }
