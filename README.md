@@ -5,6 +5,7 @@
 </p>
 
 Copyright (c) 2018 The Worktips Project.   
+Portions Copyright (c) 2018 The Loki Project.   
 Portions Copyright (c) 2014-2019 The Monero Project.   
 Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
@@ -62,6 +63,7 @@ library archives (`.a`).
 | GTest        | 1.5           | YES      | `libgtest-dev`[1]  | `gtest`      | `gtest-devel`     | YES      | Test suite       |
 | Doxygen      | any           | NO       | `doxygen`          | `doxygen`    | `doxygen`         | YES      | Documentation    |
 | Graphviz     | any           | NO       | `graphviz`         | `graphviz`   | `graphviz`        | YES      | Documentation    |
+| gperf  	   | any           | NO       | `gperf`     	   | `gperf`	  | `gperf`		      | NO       | 				    |
 
 
 [1] On Debian/Ubuntu `libgtest-dev` only includes sources and headers. You must
@@ -70,7 +72,7 @@ build the library binary manually. This can be done with the following command `
 
 Install all dependencies at once on Debian/Ubuntu:
 
-``` sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev libsqlite3-dev```
+``` sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev libsqlite3-dev gperf```
 
 Install all dependencies at once on macOS with the provided Brewfile:
 ``` brew update && brew bundle --file=contrib/brew/Brewfile ```
@@ -82,7 +84,7 @@ FreeBSD one liner for required to build dependencies
 
 Clone recursively to pull-in needed submodule(s):
 
-`$ git clone --recursive https://github.com/worktips-project/worktips`
+`$ git clone --recursive https://github.com/worktips-project/worktips-core worktips`
 
 If you already have a repo cloned, initialize and update:
 
@@ -326,6 +328,29 @@ application.
     ```
 
 * The resulting executables can be found in `build/<MinGW version>/<worktips version>/debug/bin`
+
+
+#### Cross Compiling Static Builds:
+
+You can also cross-compile static binaries on Linux for Windows.
+
+* For 64-bit windows binaries.
+  * Requires: `python3 g++-mingw-w64-x86-64 wine bc gperf`
+  
+	```bash
+	mkdir build
+	```
+	```bash	
+	cd build
+	```
+	```bash	
+cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/64-bit-toolchain.cmake -DBUILD_STATIC_DEPS=ON
+	```
+	```bash			
+	make -j$(nproc)
+	```
+
+
 
 ### On FreeBSD:
 
