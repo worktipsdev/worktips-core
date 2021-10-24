@@ -139,9 +139,17 @@ invokes cmake commands as needed.
 
 * **Optional**: to build statically-linked binaries:
 
-    ```bash
-    make release-static
-    ```
+	```bash
+	mkdir build
+	```
+	```bash	
+	cd build
+	```
+	```bash	
+	cmake .. -DBUILD_STATIC_DEPS=ON
+	```
+	```bash			
+	make -j$(nproc)
 
 Dependencies need to be built with -fPIC. Static libraries usually aren't, so you may have to build them yourself with -fPIC. Refer to their documentation for how to build them.
 
