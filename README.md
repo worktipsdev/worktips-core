@@ -344,7 +344,7 @@ You can also cross-compile static binaries on Linux for Windows.
 	cd build
 	```
 	```bash	
-cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/64-bit-toolchain.cmake -DBUILD_STATIC_DEPS=ON
+	cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/64-bit-toolchain.cmake -DBUILD_STATIC_DEPS=ON
 	```
 	```bash			
 	make -j$(nproc)
