@@ -75,9 +75,9 @@ uint64_t get_staking_requirement(cryptonote::network_type m_nettype, uint64_t he
   uint64_t height_adjusted = height - hardfork_height;
   uint64_t base = 0, variable = 0;
   std::fesetround(FE_TONEAREST);
-   if (hf_version = cryptonote::network_version_12_checkpointing)
+   if (hf_version >= cryptonote::network_version_12_checkpointing)
   {
-    base     = 150000 * COIN;
+    base     = 250000 * COIN;
     variable = (250007.0 * COIN) / worktips::exp2(height_adjusted/648000.0);
   }
  else if (hf_version >= cryptonote::network_version_11_infinite_staking)
