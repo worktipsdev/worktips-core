@@ -78,7 +78,7 @@ uint64_t get_staking_requirement(cryptonote::network_type m_nettype, uint64_t he
    if (hf_version >= cryptonote::network_version_12_checkpointing)
   {
     base     = 250000 * COIN;
-    variable = (250007.0 * COIN) / worktips::exp2(height_adjusted/648000.0);
+    variable = (250007.0 * COIN) / worktips::exp2(height_adjusted/1814400.0);
   }
  else if (hf_version >= cryptonote::network_version_11_infinite_staking)
   {
