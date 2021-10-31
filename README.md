@@ -17,6 +17,12 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 Worktips is a private cryptocurrency based on Oxen(which is based Monero). Worktips currently offers an incentivised full node layer, over the coming months we will be looking to support a secondary p2p network (Worktipsnet) and a messenger that offers private communications based on the Signal protocol (Worktips Messenger).
 
+## Algo Info
+
+Hardfork V12 = [CN Upx](https://www.cryptunit.com/algo/upx) Sincere thanks to Uplex for CN Upx
+Hardfork V11 = [CN Turtle](https://www.cryptunit.com/algo/trtl) Sincere thanks to Turtlecoin for CN Turtle
+Hardfork V7  = [CN Lite V7](https://www.cryptunit.com/algo/liteV7) Sincere thanks to Aeon for CN Lite V7
+
 More information on the project can be found on the website and in the whitepaper.
 
 Worktips is an open source project, and we encourage contributions from anyone with something to offer. For more information on contributing, please contact worktips@protonmail.com
