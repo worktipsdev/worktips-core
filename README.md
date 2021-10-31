@@ -1,8 +1,5 @@
 # Worktips
 
-<p align="center">
-    <a href="https://github.com/worktips-project/worktips/commits/dev"><img alt="pipeline status" src="https://gitlab.com/worktipsproject/worktips/badges/dev/pipeline.svg" /></a>
-</p>
 
 Copyright (c) 2018 The Worktips Project.   
 Portions Copyright (c) 2018 The Loki Project.   
@@ -11,23 +8,18 @@ Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Development resources
 
-- Web: [worktips.network](https://worktips.network)
-- Telegram: [t.me/WorktipsCommunity](https://t.me/WorktipsCommunity)
-- Mail: [team@worktips.network](mailto:team@worktips.network)
-- GitHub: [https://github.com/worktips-project/worktips](https://github.com/worktips-project/worktips)
-- Discord: [https://discord.gg/67GXfD6](https://discord.gg/67GXfD6)
+- Web: [worktipscoin.com](https://worktipscoin.com)
+- Mail: [worktips@protonmail.com](mailto:worktips@protonmail.com)
+- GitHub: [https://github.com/worktips-project/worktips-core](https://github.com/worktips-project/worktips-core)
 
-## Vulnerability disclosure
-
-- Check out our [Vulnerability Response Process](https://worktips-project.github.io/worktips-docs/Contributing/VULNERABILITY_RESPONSE_WORKTIPS), encourages prompt disclosure of any Vulnerabilities
 
 ## Information
 
-Worktips is a private cryptocurrency based on Monero. Worktips currently offers an incentivised full node layer, over the coming months we will be looking to support a secondary p2p network (Worktipsnet) and a messenger that offers private communications based on the Signal protocol (Worktips Messenger).
+Worktips is a private cryptocurrency based on Oxen(which is based Monero). Worktips currently offers an incentivised full node layer, over the coming months we will be looking to support a secondary p2p network (Worktipsnet) and a messenger that offers private communications based on the Signal protocol (Worktips Messenger).
 
 More information on the project can be found on the website and in the whitepaper.
 
-Worktips is an open source project, and we encourage contributions from anyone with something to offer. For more information on contributing, please contact team@worktips.network
+Worktips is an open source project, and we encourage contributions from anyone with something to offer. For more information on contributing, please contact worktips@protonmail.com
 
 ## Compiling Worktips from source
 
@@ -84,11 +76,11 @@ FreeBSD one liner for required to build dependencies
 
 Clone recursively to pull-in needed submodule(s):
 
-`$ git clone --recursive https://github.com/worktips-project/worktips-core worktips`
+`git clone --recursive https://github.com/worktips-project/worktips-core worktips`
 
 If you already have a repo cloned, initialize and update:
 
-`$ cd worktips && git submodule init && git submodule update`
+`cd worktips && git submodule init && git submodule update`
 
 ### Build instructions
 
