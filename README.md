@@ -1,32 +1,36 @@
 # Worktips
 
-<p align="center">
-    <a href="https://github.com/worktips-project/worktips/commits/dev"><img alt="pipeline status" src="https://gitlab.com/worktipsproject/worktips/badges/dev/pipeline.svg" /></a>
-</p>
 
 Copyright (c) 2018 The Worktips Project.   
+Portions Copyright (c) 2018 The Loki Project.   
 Portions Copyright (c) 2014-2019 The Monero Project.   
 Portions Copyright (c) 2012-2013 The Cryptonote developers.
 
 ## Development resources
 
-- Web: [worktips.network](https://worktips.network)
-- Telegram: [t.me/WorktipsCommunity](https://t.me/WorktipsCommunity)
-- Mail: [team@worktips.network](mailto:team@worktips.network)
-- GitHub: [https://github.com/worktips-project/worktips](https://github.com/worktips-project/worktips)
-- Discord: [https://discord.gg/67GXfD6](https://discord.gg/67GXfD6)
+- Web: [worktipscoin.com](https://worktipscoin.com)
+- Mail: [worktips@protonmail.com](mailto:worktips@protonmail.com)
+- GitHub: [https://github.com/worktips-project/worktips-core](https://github.com/worktips-project/worktips-core)
 
-## Vulnerability disclosure
-
-- Check out our [Vulnerability Response Process](https://worktips-project.github.io/worktips-docs/Contributing/VULNERABILITY_RESPONSE_WORKTIPS), encourages prompt disclosure of any Vulnerabilities
 
 ## Information
 
-Worktips is a private cryptocurrency based on Monero. Worktips currently offers an incentivised full node layer, over the coming months we will be looking to support a secondary p2p network (Worktipsnet) and a messenger that offers private communications based on the Signal protocol (Worktips Messenger).
+Worktips is a private cryptocurrency based on Oxen(which is based Monero). Worktips currently offers an incentivised full node layer, over the coming months we will be looking to support a secondary p2p network (Worktipsnet) and a messenger that offers private communications based on the Signal protocol (Worktips Messenger).
+
 
 More information on the project can be found on the website and in the whitepaper.
 
-Worktips is an open source project, and we encourage contributions from anyone with something to offer. For more information on contributing, please contact team@worktips.network
+Worktips is an open source project, and we encourage contributions from anyone with something to offer. For more information on contributing, please contact worktips@protonmail.com
+
+
+## Algo Info
+
+Hardfork V12 = [CN Upx](https://www.cryptunit.com/algo/upx) Sincere thanks to Uplex for CN Upx
+
+Hardfork V11 = [CN Turtle](https://www.cryptunit.com/algo/trtl) Sincere thanks to Turtlecoin for CN Turtle
+
+Hardfork V7  = [CN Lite V7](https://www.cryptunit.com/algo/liteV7) Sincere thanks to Aeon for CN Lite V7
+
 
 ## Compiling Worktips from source
 
@@ -62,6 +66,7 @@ library archives (`.a`).
 | GTest        | 1.5           | YES      | `libgtest-dev`[1]  | `gtest`      | `gtest-devel`     | YES      | Test suite       |
 | Doxygen      | any           | NO       | `doxygen`          | `doxygen`    | `doxygen`         | YES      | Documentation    |
 | Graphviz     | any           | NO       | `graphviz`         | `graphviz`   | `graphviz`        | YES      | Documentation    |
+| gperf  	   | any           | NO       | `gperf`     	   | `gperf`	  | `gperf`		      | NO       | 				    |
 
 
 [1] On Debian/Ubuntu `libgtest-dev` only includes sources and headers. You must
@@ -70,7 +75,7 @@ build the library binary manually. This can be done with the following command `
 
 Install all dependencies at once on Debian/Ubuntu:
 
-``` sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev libsqlite3-dev```
+``` sudo apt update && sudo apt install build-essential cmake pkg-config libboost-all-dev libssl-dev libzmq3-dev libunbound-dev libsodium-dev libunwind8-dev liblzma-dev libreadline6-dev libldns-dev libexpat1-dev doxygen graphviz libpgm-dev libsqlite3-dev gperf```
 
 Install all dependencies at once on macOS with the provided Brewfile:
 ``` brew update && brew bundle --file=contrib/brew/Brewfile ```
@@ -82,11 +87,11 @@ FreeBSD one liner for required to build dependencies
 
 Clone recursively to pull-in needed submodule(s):
 
-`$ git clone --recursive https://github.com/worktips-project/worktips`
+`git clone --recursive https://github.com/worktips-project/worktips-core worktips`
 
 If you already have a repo cloned, initialize and update:
 
-`$ cd worktips && git submodule init && git submodule update`
+`cd worktips && git submodule init && git submodule update`
 
 ### Build instructions
 
@@ -137,9 +142,17 @@ invokes cmake commands as needed.
 
 * **Optional**: to build statically-linked binaries:
 
-    ```bash
-    make release-static
-    ```
+	```bash
+	mkdir build
+	```
+	```bash	
+	cd build
+	```
+	```bash	
+	cmake .. -DBUILD_STATIC_DEPS=ON
+	```
+	```bash			
+	make -j$(nproc)
 
 Dependencies need to be built with -fPIC. Static libraries usually aren't, so you may have to build them yourself with -fPIC. Refer to their documentation for how to build them.
 
@@ -326,6 +339,29 @@ application.
     ```
 
 * The resulting executables can be found in `build/<MinGW version>/<worktips version>/debug/bin`
+
+
+#### Cross Compiling Static Builds:
+
+You can also cross-compile static binaries on Linux for Windows.
+
+* For 64-bit windows binaries.
+  * Requires: `python3 g++-mingw-w64-x86-64 wine bc gperf`
+  
+	```bash
+	mkdir build
+	```
+	```bash	
+	cd build
+	```
+	```bash	
+	cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/64-bit-toolchain.cmake -DBUILD_STATIC_DEPS=ON
+	```
+	```bash			
+	make -j$(nproc)
+	```
+
+
 
 ### On FreeBSD:
 

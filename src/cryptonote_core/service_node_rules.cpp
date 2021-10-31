@@ -69,21 +69,26 @@ uint64_t get_staking_requirement(cryptonote::network_type m_nettype, uint64_t he
     return static_cast<uint64_t>(result);
   }
 
-  uint64_t hardfork_height = m_nettype == cryptonote::MAINNET ? 54689 : 96210 /* stagenet */;
+  uint64_t hardfork_height = m_nettype == cryptonote::MAINNET ? 54689 : 3 /* stagenet */;
   if (height < hardfork_height) height = hardfork_height;
 
   uint64_t height_adjusted = height - hardfork_height;
   uint64_t base = 0, variable = 0;
   std::fesetround(FE_TONEAREST);
-  if (hf_version >= cryptonote::network_version_11_infinite_staking)
+   if (hf_version >= cryptonote::network_version_12_checkpointing)
+  {
+    base     = 250000 * COIN;
+    variable = (250007.0 * COIN) / worktips::exp2(height_adjusted/1814400.0);
+  }
+ else if (hf_version >= cryptonote::network_version_11_infinite_staking)
   {
     base     = 150000 * COIN;
-    variable = (25007.0 * COIN) / worktips::exp2(height_adjusted/129600.0);
+    variable = (250007.0 * COIN) / worktips::exp2(height_adjusted/129600.0);
   }
   else
   {
     base      = 100000 * COIN;
-    variable  = (350000.0 * COIN) / worktips::exp2(height_adjusted/129600.0);
+    variable  = (350000.0 * COIN) / worktips::exp2(height_adjusted/648000.0);
   }
 
   uint64_t result = base + variable;

@@ -587,6 +587,8 @@ namespace nodetool
     else if (nettype == cryptonote::STAGENET)
     {
       full_addrs.insert("apple-stage.node.worktipscoin.com:32021");
+	  full_addrs.insert("165.232.187.34:32021");
+	  full_addrs.insert("143.110.240.207:32021");
     }
     else if (nettype == cryptonote::FAKECHAIN)
     {
@@ -605,7 +607,7 @@ namespace nodetool
 	  full_addrs.insert("kiwi.node.worktipscoin.com:31021");//placeholder
 	  full_addrs.insert("lychee.node.worktipscoin.com:31021");//placeholder
 	  full_addrs.insert("144.202.10.128:31021");
-	  full_addrs.insert("107.172.242.234:31021");
+	  full_addrs.insert("167.88.113.176:31021");
     }
     return full_addrs;
   }

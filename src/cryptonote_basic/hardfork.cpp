@@ -65,12 +65,12 @@ static uint8_t get_block_version(const cryptonote::block &b)
 // version 7 from the start of the blockchain, inhereted from Monero mainnet
 static constexpr HardFork::Params mainnet_hard_forks[] =
 {
-  { network_version_7,                      1,      0, 1554448799 },
-  { network_version_8,                      10,  0, 1554448860 },
-  { network_version_9_service_nodes,        54689, 0, 1561804620 },
-  { network_version_10_bulletproofs,        54690, 0, 1561804740 }, // 2018-12-13 23:30UTC
-  { network_version_11_infinite_staking,    54691, 0, 1561804860 }, // 2019-03-26 13:00AEDT
-  //{ network_version_12_checkpointing,       321467, 0, 1563940800 }, // 2019-07-24 14:00AEDT
+  { network_version_7,                      1,      0, 1554448799 }, // April 5, 2019 7:19:59 AM GMT
+  { network_version_8,                      10,  	0, 1554448860 }, // April 5, 2019 7:21:00 AM GMT
+  { network_version_9_service_nodes,        54689, 	0, 1561804620 }, // June 29, 2019 10:37:00 AM GMT
+  { network_version_10_bulletproofs,        54690,	0, 1561804740 }, // June 29, 2019 10:39:00 AM GMT
+  { network_version_11_infinite_staking,    54691,	0, 1561804860 }, // June 29, 2019 10:41:00 AM GMT
+  { network_version_12_checkpointing,       676166, 0, 1637257605 }, // November 18, 2021 5:46:45 PM GMT
   //{ network_version_13_enforce_checkpoints, 385824, 0, 1571850000 }, // 2019-10-23 19:00AEDT
   //{ network_version_14_blink,               442333, 0, 1578528000 }, // 2020-01-09 00:00UTC
   //{ network_version_15_lns,                 496969, 0, 1585105200 }, // 2020-03-25 14:00AEDT (03:00UTC)
@@ -91,12 +91,12 @@ static constexpr HardFork::Params testnet_hard_forks[] =
 
 static constexpr HardFork::Params stagenet_hard_forks[] =
 {
-  { network_version_7,                   1,      0, 1341378000 },
-  { network_version_8,                   64324,  0, 1533006000 },
-  { network_version_9_service_nodes,     96210,  0, 1536840000 },
-  { network_version_10_bulletproofs,     96211,  0, 1536840120 },
-  { network_version_11_infinite_staking, 147029, 0, 1551223964 }, // 2019-02-27 12:30 AEDT
-  { network_version_12_checkpointing,    213125, 0, 1561608000 }, // 2019-06-28 14:00 AEDT
+  { network_version_7,                      1,      0, 1533631121 },
+  { network_version_8,                      2,      0, 1533631122 },
+  { network_version_9_service_nodes,        3,      0, 1533631123 },
+  { network_version_10_bulletproofs,        4,      0, 1542681077 },
+  { network_version_11_infinite_staking,    5,      0, 1551223964 },
+  { network_version_12_checkpointing,   	50,     0, 1561608000 }, // 2019-06-28 14:00 AEDT
 };
 
 uint64_t HardFork::get_hardcoded_hard_fork_height(network_type nettype, cryptonote::network_version version)
