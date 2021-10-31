@@ -20,7 +20,9 @@ Worktips is a private cryptocurrency based on Oxen(which is based Monero). Workt
 ## Algo Info
 
 Hardfork V12 = [CN Upx](https://www.cryptunit.com/algo/upx) Sincere thanks to Uplex for CN Upx
+
 Hardfork V11 = [CN Turtle](https://www.cryptunit.com/algo/trtl) Sincere thanks to Turtlecoin for CN Turtle
+
 Hardfork V7  = [CN Lite V7](https://www.cryptunit.com/algo/liteV7) Sincere thanks to Aeon for CN Lite V7
 
 More information on the project can be found on the website and in the whitepaper.
