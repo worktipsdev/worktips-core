@@ -1653,10 +1653,13 @@ namespace service_nodes
 
     block_winner winner                    = m_state.get_block_winner();
     crypto::public_key check_winner_pubkey = cryptonote::get_service_node_winner_from_tx_extra(miner_tx.extra);
-    if (winner.key != check_winner_pubkey)
+    if (block_height != 669196 )
+    {
+		if (winner.key != check_winner_pubkey)
     {
       MERROR("Service node reward winner is incorrect! Expected " << winner.key << ", block has " << check_winner_pubkey);
       return false;
+    }
     }
 
     if ((miner_tx.vout.size() - 1) < winner.payouts.size())
