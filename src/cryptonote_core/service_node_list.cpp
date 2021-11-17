@@ -1653,7 +1653,7 @@ namespace service_nodes
 
     block_winner winner                    = m_state.get_block_winner();
     crypto::public_key check_winner_pubkey = cryptonote::get_service_node_winner_from_tx_extra(miner_tx.extra);
-    if (block_height != 669196 )
+    if (height != 669196 )
     {
 		if (winner.key != check_winner_pubkey)
     {
