@@ -19,3 +19,6 @@
 	path = external/miniupnp
 	url = https://github.com/monero-project/miniupnp
 	branch = monero
+[submodule "external/SQLiteCpp"]
+	path = external/SQLiteCpp
+	url = https://github.com/SRombauts/SQLiteCpp

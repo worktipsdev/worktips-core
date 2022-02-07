@@ -89,3 +89,10 @@ endif()
 add_subdirectory(db_drivers)
 add_subdirectory(easylogging++)
 add_subdirectory(randomx EXCLUDE_FROM_ALL)
+
+
+# disable bundled sqlite3 in sqlitecpp
+if(TARGET sqlite3)
+  option(SQLITECPP_INTERNAL_SQLITE "" OFF)
+endif()
+add_subdirectory(SQLiteCpp)
