@@ -52,7 +52,7 @@ target_link_libraries(cryptonote_core
     ringct
     device
     checkpoints
-    SQLite::SQLite3
+    sqlite3
   PRIVATE
     Boost::program_options
     Boost::chrono

@@ -13,7 +13,6 @@
 #include <shared_mutex>
 #include <thread>
 #include <unordered_set>
-#include <optional>
 
 namespace db
 {
@@ -39,7 +38,7 @@ namespace db
   };
 
   // Binds a string_view as a no-copy blob at parameter index i.
-  inline void
+  void
   bind_blob_ref(SQLite::Statement& st, int i, std::string_view blob)
   {
     st.bindNoCopy(i, static_cast<const void*>(blob.data()), blob.size());
@@ -131,7 +130,8 @@ namespace db
   std::optional<type_or_tuple<T...>>
   exec_and_maybe_get(SQLite::Statement& st, const Args&... bind)
   {
-    bind_oneshot(st, bind...);
+    int i = 1;
+    (bind_oneshot(st, i, bind), ...);
     std::optional<type_or_tuple<T...>> result;
     while (st.executeStep())
     {
@@ -157,7 +157,7 @@ namespace db
     if (!maybe_result)
     {
       MERROR("Expected single-row result, got no rows from {}" << st.getQuery());
-      throw std::runtime_error{"DB error: expected single-row result, got no rows"};
+      throw std::runtime_error{"DB error: expected single-row result, got not rows"};
     }
     return *std::move(maybe_result);
   }
@@ -168,7 +168,8 @@ namespace db
   std::vector<type_or_tuple<T...>>
   get_all(SQLite::Statement& st, const Bind&... bind)
   {
-    bind_oneshot(st, bind...);
+    int i = 1;
+    (bind_oneshot(st, i, bind), ...);
     std::vector<type_or_tuple<T...>> results;
     while (st.executeStep())
       results.push_back(get<T...>(st));
@@ -196,13 +197,6 @@ namespace db
   // Storage database class.
   class Database
   {
-    public:
-    // This must be declared *before* the prepared statements container,
-    // so that it is destroyed *after* because sqlite_close() fails if any
-    // prepared statements are not finalized.
-    SQLite::Database db;
-
-    private:
     // SQLiteCpp's statements are not thread-safe, so we prepare them thread-locally when needed
     std::unordered_map<std::thread::id, std::unordered_map<std::string, SQLite::Statement>>
         prepared_sts;
@@ -241,6 +235,7 @@ namespace db
     };
 
    public:
+    SQLite::Database db;
 
     StatementWrapper
     prepared_st(const std::string& query)
@@ -276,15 +271,8 @@ namespace db
       return exec_and_get<T...>(prepared_st(query), bind...);
     }
 
-    template <typename... T, typename... Bind>
-    auto
-    prepared_maybe_get(const std::string& query, const Bind&... bind)
-    {
-      return exec_and_maybe_get<T...>(prepared_st(query), bind...);
-    }
-
     explicit Database(const std::filesystem::path& db_path, const std::string_view db_password)
-        : db{db_path, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE | SQLite::OPEN_FULLMUTEX, 5000/*ms*/}
+        : db{db_path, SQLite::OPEN_READWRITE | SQLite::OPEN_CREATE | SQLite::OPEN_FULLMUTEX}
     {
       // Don't fail on these because we can still work even if they fail
       if (int rc = db.tryExec("PRAGMA journal_mode = WAL"); rc != SQLITE_OK)

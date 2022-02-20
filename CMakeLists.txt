@@ -497,10 +497,13 @@ if (WITH_SYSTEMD AND NOT BUILD_STATIC_DEPS)
     endif()
 endif()
 
-if(NOT BUILD_STATIC_DEPS)
-  pkg_check_modules(SQLITE3 REQUIRED sqlite3 IMPORTED_TARGET GLOBAL)
+if(BUILD_STATIC_DEPS)
+  # sqlite3 target already set up
+else()
+  add_library(sqlite3 INTERFACE)
+  pkg_check_modules(SQLITE3 REQUIRED sqlite3 IMPORTED_TARGET)
   message(STATUS "Found sqlite3 ${SQLITE3_VERSION}")
-  add_library(SQLite::SQLite3 ALIAS PkgConfig::SQLITE3)
+  target_link_libraries(sqlite3 INTERFACE PkgConfig::SQLITE3)
 endif()
 
 add_subdirectory(external)
