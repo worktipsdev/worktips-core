@@ -1,3 +1,4 @@
+# Copyright (c) 2018, The Worktips Project
 # Copyright (c) 2018, The Loki Project
 # Copyright (c) 2014-2019, The Monero Project
 #
@@ -44,7 +45,7 @@ function (enable_stack_trace target)
   endif()
 endfunction()
 
-function (loki_add_executable target binary)
+function (worktips_add_executable target binary)
   add_executable("${target}" ${ARGN})
   target_link_libraries("${target}" PRIVATE extra)
   enable_stack_trace("${target}")

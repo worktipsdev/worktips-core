@@ -1,4 +1,5 @@
 // Copyright (c) 2017-2019, The Monero Project
+// Copyright (c)      2018, The Worktips Project
 // Copyright (c)      2018, The Loki Project
 // 
 // All rights reserved.
@@ -33,8 +34,8 @@
 #include "dns_utils.h"
 #include "updates.h"
 
-#undef LOKI_DEFAULT_LOG_CATEGORY
-#define LOKI_DEFAULT_LOG_CATEGORY "updates"
+#undef WORKTIPS_DEFAULT_LOG_CATEGORY
+#define WORKTIPS_DEFAULT_LOG_CATEGORY "updates"
 
 namespace tools
 {

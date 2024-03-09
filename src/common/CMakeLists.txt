@@ -1,3 +1,4 @@
+# Copyright (c) 2018, The Worktips Project
 # Copyright (c) 2018, The Loki Project
 # Copyright (c) 2014-2019, The Monero Project
 #
@@ -35,7 +36,7 @@ add_library(common
   download.cpp
   error.cpp
   expect.cpp
-  loki.cpp
+  worktips.cpp
   util.cpp
   i18n.cpp
   rules.cpp
@@ -50,7 +51,14 @@ add_library(common
   updates.cpp
   aligned.c
   timings.cc
-  combinator.cpp)
+  combinator.cpp
+  ${PROJECT_BINARY_DIR}/translations/translation_files.cpp
+  )
+
+
+set_source_files_properties(${PROJECT_BINARY_DIR}/translations/translation_files.cpp PROPERTIES GENERATED 1)
+add_dependencies(common generate_translation_data)
+
 
 if (STACK_TRACE)
   target_sources(common PRIVATE stack_trace.cpp)
@@ -63,12 +71,11 @@ if (BACKCOMPAT)
   target_sources(common PRIVATE compat/glibc_compat.cpp)
 endif()
 
-add_dependencies(common generate_translations_header)
 
 target_link_libraries(common
   PUBLIC
     cncrypto
-    lokimq::lokimq
+    worktipsmq::worktipsmq
   PRIVATE
     libunbound
     Boost::regex
@@ -77,7 +84,6 @@ target_link_libraries(common
     epee_readline
     extra)
 
-target_include_directories(common PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../../translations")
 
 option(STACK_TRACE "Install a hook that dumps stack on exception" OFF)
 

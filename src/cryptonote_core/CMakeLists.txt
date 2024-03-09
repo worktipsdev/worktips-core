@@ -1,3 +1,4 @@
+# Copyright (c) 2018, The Worktips Project
 # Copyright (c) 2018, The Loki Project
 # Copyright (c) 2014-2019, The Monero Project
 #
@@ -36,7 +37,7 @@ add_library(cryptonote_core
   service_node_quorum_cop.cpp
   service_node_swarm.cpp
   tx_blink.cpp
-  loki_name_system.cpp
+  worktips_name_system.cpp
   tx_pool.cpp
   tx_sanity_check.cpp
   miner.cpp
@@ -55,17 +56,8 @@ target_link_libraries(cryptonote_core
   PRIVATE
     Boost::program_options
     Boost::chrono
+	systemd
     extra)
-
-option(WITH_SYSTEMD "Attempts to link against and enable systemd daemon notification support" ON)
-if (WITH_SYSTEMD)
-    pkg_check_modules(SYSTEMD libsystemd)
-
-    if(SYSTEMD_FOUND)
-      target_compile_definitions(cryptonote_core PRIVATE ENABLE_SYSTEMD)
-      target_link_libraries(cryptonote_core PRIVATE ${SYSTEMD_LIBRARIES})
-    endif()
-endif()
 
 if(PER_BLOCK_CHECKPOINT)
   target_compile_definitions(cryptonote_core PUBLIC PER_BLOCK_CHECKPOINT)

@@ -1,3 +1,4 @@
+# Copyright (c) 2018, The Worktips Project
 # Copyright (c) 2018, The Loki Project
 # Copyright (c) 2014-2019, The Monero Project
 #
@@ -50,9 +51,10 @@ target_link_libraries(wallet
     Boost::thread
   PRIVATE
     OpenSSL::SSL
+    OpenSSL::Crypto
     extra)
 
-loki_add_executable(wallet_rpc_server "loki-wallet-rpc"
+worktips_add_executable(wallet_rpc_server "worktips-wallet-rpc"
   wallet_rpc_server.cpp
   )
 

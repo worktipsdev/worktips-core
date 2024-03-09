@@ -1,4 +1,5 @@
 // Copyright (c) 2017-2019, The Monero Project
+// Copyright (c)      2018, The Worktips Project
 // Copyright (c)      2018, The Loki Project
 // 
 // All rights reserved.
@@ -38,8 +39,8 @@
 #include "common/pruning.h"
 #include "block_queue.h"
 
-#undef LOKI_DEFAULT_LOG_CATEGORY
-#define LOKI_DEFAULT_LOG_CATEGORY "cn.block_queue"
+#undef WORKTIPS_DEFAULT_LOG_CATEGORY
+#define WORKTIPS_DEFAULT_LOG_CATEGORY "cn.block_queue"
 
 namespace std {
   static_assert(sizeof(size_t) <= sizeof(boost::uuids::uuid), "boost::uuids::uuid too small");

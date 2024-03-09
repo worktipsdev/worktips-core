@@ -1,3 +1,4 @@
+# Copyright (c) 2018, The Worktips Project
 # Copyright (c) 2018, The Loki Project
 # Copyright (c) 2014-2019, The Monero Project
 #
@@ -32,6 +33,7 @@ add_library(mnemonics
 
 target_link_libraries(mnemonics
   PRIVATE
+    cncrypto
     epee
     easylogging
     extra)

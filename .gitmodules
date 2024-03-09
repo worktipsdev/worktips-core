@@ -2,10 +2,6 @@
 	path = external/unbound
 	url = https://github.com/monero-project/unbound
 	branch = monero
-[submodule "external/miniupnp"]
-	path = external/miniupnp
-	url = https://github.com/monero-project/miniupnp
-	branch = monero
 [submodule "external/rapidjson"]
 	path = external/rapidjson
 	url = https://github.com/Tencent/rapidjson
@@ -15,6 +11,11 @@
 [submodule "external/randomx"]
 	path = external/randomx
 	url = https://github.com/loki-project/RandomX
-[submodule "external/loki-mq"]
-	path = external/loki-mq
-	url = https://github.com/loki-project/loki-mq.git
+[submodule "external/worktips-mq"]
+	path = external/worktips-mq
+	url = https://github.com/Ghost-ai-cpu/worktips-mq
+	branch = wtips-base
+[submodule "external/miniupnp"]
+	path = external/miniupnp
+	url = https://github.com/monero-project/miniupnp
+	branch = monero

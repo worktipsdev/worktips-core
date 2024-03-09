@@ -1,4 +1,5 @@
 // Copyright (c) 2014-2019, The Monero Project
+// Copyright (c)      2018, The Worktips Project
 // Copyright (c)      2018, The Loki Project
 //
 // All rights reserved.
@@ -41,7 +42,7 @@ using namespace epee;
 #include "common/command_line.h"
 #include "common/updates.h"
 #include "common/download.h"
-#include "common/loki.h"
+#include "common/worktips.h"
 #include "common/util.h"
 #include "common/perf_timer.h"
 #include "common/random.h"
@@ -60,8 +61,8 @@ using namespace epee;
 #include "p2p/net_node.h"
 #include "version.h"
 
-#undef LOKI_DEFAULT_LOG_CATEGORY
-#define LOKI_DEFAULT_LOG_CATEGORY "daemon.rpc"
+#undef WORKTIPS_DEFAULT_LOG_CATEGORY
+#define WORKTIPS_DEFAULT_LOG_CATEGORY "daemon.rpc"
 
 #define MAX_RESTRICTED_FAKE_OUTS_COUNT 40
 #define MAX_RESTRICTED_GLOBAL_FAKE_OUTS_COUNT 5000
@@ -257,7 +258,7 @@ namespace cryptonote
     res.block_size_median = res.block_weight_median = m_core.get_blockchain_storage().get_current_cumulative_block_weight_median();
     res.start_time = restricted ? 0 : (uint64_t)m_core.get_start_time();
     res.last_storage_server_ping = restricted ? 0 : (uint64_t)m_core.m_last_storage_server_ping;
-    res.last_lokinet_ping = restricted ? 0 : (uint64_t)m_core.m_last_lokinet_ping;
+    //res.last_worktipsnet_ping = restricted ? 0 : (uint64_t)m_core.m_last_worktipsnet_ping;
     res.free_space = restricted ? std::numeric_limits<uint64_t>::max() : m_core.get_free_space();
     res.offline = m_core.offline();
     res.bootstrap_daemon_address = restricted ? "" : m_bootstrap_daemon_address;
@@ -273,7 +274,7 @@ namespace cryptonote
     if (restricted)
       res.database_size = round_up(res.database_size, 5ull* 1024 * 1024 * 1024);
     res.update_available = restricted ? false : m_core.is_update_available();
-    res.version = restricted ? std::to_string(LOKI_VERSION[0]) : LOKI_VERSION_STR;
+    res.version = restricted ? std::to_string(WORKTIPS_VERSION[0]) : WORKTIPS_VERSION_STR;
     res.status = CORE_RPC_STATUS_OK;
     return true;
   }
@@ -1012,7 +1013,7 @@ namespace cryptonote
     const uint8_t major_version = m_core.get_blockchain_storage().get_current_hard_fork_version();
 
     res.pow_algorithm =
-        major_version >= network_version_12_checkpointing    ? "RandomX (LOKI variant)"               :
+        major_version >= network_version_12_checkpointing    ? "Cryptonight UPX"               :
         major_version == network_version_11_infinite_staking ? "Cryptonight Turtle Light (Variant 2)" :
                                                                "Cryptonight Heavy (Variant 2)";
 
@@ -1231,7 +1232,7 @@ namespace cryptonote
   //------------------------------------------------------------------------------------------------------------------------------
 
   //
-  // Loki
+  // Worktips
   //
   bool core_rpc_server::on_get_output_blacklist_bin(const COMMAND_RPC_GET_OUTPUT_BLACKLIST::request& req, COMMAND_RPC_GET_OUTPUT_BLACKLIST::response& res, const connection_context *ctx)
   {
@@ -1374,7 +1375,7 @@ namespace cryptonote
       return false;
     }
 
-    if (b.major_version >= network_version_12_checkpointing)
+    if (b.major_version < network_version_7)
     {
       uint64_t seed_height, next_height;
       crypto::hash seed_hash;
@@ -2138,16 +2139,16 @@ namespace cryptonote
     if (get_service_nodes_res.service_node_states.empty()) // Started in service node but not staked, no information on the blockchain yet
     {
       res.service_node_state.service_node_pubkey  = std::move(get_service_node_key_res.service_node_pubkey);
-      res.service_node_state.version_major        = LOKI_VERSION[0];
-      res.service_node_state.version_minor        = LOKI_VERSION[1];
-      res.service_node_state.version_patch        = LOKI_VERSION[2];
+      res.service_node_state.version_major        = WORKTIPS_VERSION[0];
+      res.service_node_state.version_minor        = WORKTIPS_VERSION[1];
+      res.service_node_state.version_patch        = WORKTIPS_VERSION[2];
       res.service_node_state.public_ip            = epee::string_tools::get_ip_string_from_int32(m_core.sn_public_ip());
       res.service_node_state.storage_port         = m_core.storage_port();
       res.service_node_state.storage_lmq_port     = m_core.m_storage_lmq_port;
       res.service_node_state.quorumnet_port       = m_core.quorumnet_port();
       res.service_node_state.pubkey_ed25519       = std::move(get_service_node_key_res.service_node_ed25519_pubkey);
       res.service_node_state.pubkey_x25519        = std::move(get_service_node_key_res.service_node_x25519_pubkey);
-      res.service_node_state.service_node_version = LOKI_VERSION;
+      res.service_node_state.service_node_version = WORKTIPS_VERSION;
     }
     else
     {
@@ -2295,7 +2296,7 @@ namespace cryptonote
       return true;
     }
 
-    static const char software[] = "loki";
+    static const char software[] = "worktips";
 #ifdef BUILD_TAG
     static const char buildtag[] = BOOST_PP_STRINGIZE(BUILD_TAG);
     static const char subdir[] = "cli";
@@ -2316,7 +2317,7 @@ namespace cryptonote
       res.status = "Error checking for updates";
       return true;
     }
-    if (tools::vercmp(version.c_str(), LOKI_VERSION_STR) <= 0)
+    if (tools::vercmp(version.c_str(), WORKTIPS_VERSION_STR) <= 0)
     {
       res.update = false;
       res.status = CORE_RPC_STATUS_OK;
@@ -2625,7 +2626,7 @@ namespace cryptonote
     };
 
   //
-  // Loki
+  // Worktips
   //
   const command_line::arg_descriptor<int> core_rpc_server::arg_rpc_long_poll_connections = {
       "rpc-long-poll-connections"
@@ -3188,16 +3189,16 @@ namespace cryptonote
     return true;
   }
   //------------------------------------------------------------------------------------------------------------------------------
-  bool core_rpc_server::on_lokinet_ping(const COMMAND_RPC_LOKINET_PING::request& req,
-                                        COMMAND_RPC_LOKINET_PING::response& res,
+ /* bool core_rpc_server::on_worktipsnet_ping(const COMMAND_RPC_WORKTIPSNET_PING::request& req,
+                                        COMMAND_RPC_WORKTIPSNET_PING::response& res,
                                         epee::json_rpc::error&,
                                         const connection_context*)
   {
-    if (handle_ping(req.version, service_nodes::MIN_LOKINET_VERSION,
-          "Lokinet", m_core.m_last_lokinet_ping, LOKINET_PING_LIFETIME, res))
+    if (handle_ping(req.version, service_nodes::MIN_WORKTIPSNET_VERSION,
+          "Worktipsnet", m_core.m_last_worktipsnet_ping, WORKTIPSNET_PING_LIFETIME, res))
       m_core.reset_proof_interval();
     return true;
-  }
+  } */
   //------------------------------------------------------------------------------------------------------------------------------
   bool core_rpc_server::on_get_staking_requirement(const COMMAND_RPC_GET_STAKING_REQUIREMENT::request& req, COMMAND_RPC_GET_STAKING_REQUIREMENT::response& res, epee::json_rpc::error& error_resp, const connection_context *ctx)
   {
@@ -3461,7 +3462,7 @@ namespace cryptonote
         return false;
       }
 
-      // TODO(loki): We now serialize both owner and backup_owner, since if
+      // TODO(worktips): We now serialize both owner and backup_owner, since if
       // we specify an owner that is backup owner, we don't show the (other)
       // owner. For RPC compatibility we keep the request_index around until the
       // next hard fork (16)
